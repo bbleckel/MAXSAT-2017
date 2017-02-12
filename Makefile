@@ -1,10 +1,7 @@
 CPPFLAGS = -O3 -Wall -Werror
-
 CC = g++
 
-
 PROGS = main
-
 default: $(PROGS)
 
 main: main.cpp

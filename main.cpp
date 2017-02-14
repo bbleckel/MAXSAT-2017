@@ -53,11 +53,32 @@ int main (int argc, char** argv) {
     double posRate;
     double negRate;
     double mutAmnt;
-    
+
     if(argc != 9) {
         printInfo();
         exit(1);
     } else {
+      // read in file
+      ifstream inputFile;
+      inputFile.open(argv[1], ios::in);
+      if(!inputFile.is_open()) {
+        cerr << "ERROR: Could not open file" << endl;
+      } else {
+        while(getline(inputFile, line)) {
+          if(line.front() == 'c') {
+            // line is a comment, should not be included in algorithm
+          } else if (line.front() == 'p') {
+            // the line just before the data begins
+            // contains information about the data if we want it
+          } else if (line.back() == '0'){
+            // line should be included in data we are using
+          }
+
+          cout << line << endl;
+        }
+        inputFile.close();
+      }
+
         // deal with reading file
         //        ifstream fileName(argv[1]);
         //        if(!fileName.is_open()) {
@@ -70,6 +91,8 @@ int main (int argc, char** argv) {
         //            }
         //        }
         // type of algorithm determines how other arguments are interpreted
+
+        // I don't think we want the ! in these
         if(!strcmp(argv[8], "g")) {
             algType = 0;
         } else if(!strcmp(argv[8], "p")) {
@@ -78,7 +101,7 @@ int main (int argc, char** argv) {
             cout << "Invalid eighth argument specifying algorithm type. Please use:" << endl;
             cout << "    algorithm    = type of algorithm (g or p) (string)" << endl;
         }
-        
+
         // introduces some possible errors, like entering "ts" for selection but "p" for algorithm; that error won't be caught
         if(!algType) {
             // assign relevant GA variables
@@ -104,7 +127,7 @@ int main (int argc, char** argv) {
             }
             pC = atof(argv[5]);
             pM = atof(argv[6]);
-            
+
         } else {
             // assign relevant PBIL variables
             posRate = atof(argv[3]);
@@ -112,12 +135,12 @@ int main (int argc, char** argv) {
             pM = atof(argv[5]);
             mutAmnt = atof(argv[6]);
         }
-        
+
         individuals = atoi(argv[2]);
         generations = atoi(argv[7]);
     }
-    
-    
+
+
     // print correct input
     cout << "Your input values:" << endl;
     if(!algType) {
@@ -138,13 +161,13 @@ int main (int argc, char** argv) {
         cout << "    MAX_GEN         =  " << generations << endl;
         cout << "    ALG_TYPE        =  " << algType << endl;
     }
-    
+
     if(!algType) {
         // call GA
     } else {
         // call PBIL
         PBIL_MAXSAT(individuals, posRate, negRate, pM, mutAmnt, generations, 10);
     }
-    
-    
+
+
 } // end main

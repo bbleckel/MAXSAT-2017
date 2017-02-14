@@ -13,13 +13,13 @@ void printPV(vector<double> PV);
 
 void mutatePV(vector<double> &PV, double pM, double mutAmnt);
 
-int* evalFitness(int** population, int size, int stringSize);
+int countSatClauses(vector< vector<int> > clauses, int* solution);
 
+int* evalFitness(vector< vector<int> > clauses, int** population, int size, int stringSize);
 int findMaxFitness(int* fitnessList, int size);
 
 int findMinFitness(int* fitnessList, int size);
 
-void PBIL_MAXSAT(int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int stringSize);
-
+void PBIL_MAXSAT(vector< vector<int> > clauses, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int stringSize);
 
 #endif

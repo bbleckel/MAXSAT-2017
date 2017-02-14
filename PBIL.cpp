@@ -53,14 +53,32 @@ void mutatePV(vector<double> &PV, double pM, double mutAmnt) {
     }
 }
 
-int* evalFitness(int** population, int size, int stringSize) {
+int countSatClauses(vector< vector<int> > clauses, int* solution) {
+    int count = 0;
+    // each solution requires O(numClauses * numVariables) to count satisfied clauses
+    for(int i = 0; i < clauses.size(); i++) {
+        for(int j = 0; j < clauses[0].size(); j++) {
+            /* solution value of 0 and negative variable in clause or
+             solution value of 1 and positive variable in clause */
+            if(clauses[i][j] < 0) {
+                cout << "Clause " << i << " has variable " << j << " negative!" << endl;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int* evalFitness(vector< vector<int> > clauses, int** population, int size, int stringSize) {
     int* fitnessList = (int*) malloc(sizeof(int) * size);
     int fitness;
     
     srand(time(NULL));
+    // iterate through solutions
     for(int i = 0; i < size; i++) {
         // evaluate fitness of each candidate solution
         // (temporarily random)
+        countSatClauses(clauses, population[i]);
         fitness = rand() % 100;
         fitnessList[i] = fitness;
     }
@@ -91,7 +109,7 @@ int findMinFitness(int* fitnessList, int size) {
     return minIndex;
 }
 
-void PBIL_MAXSAT(int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int stringSize) {
+void PBIL_MAXSAT(vector< vector<int> > clauses, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int stringSize) {
     cout << "Solving with PBIL..." << endl;
     
     vector<double> PV;
@@ -122,7 +140,7 @@ void PBIL_MAXSAT(int individuals, double posRate, double negRate, double pM, dou
             }
         }
         
-        int* fitnessList = evalFitness(population, individuals, stringSize);
+        int* fitnessList = evalFitness(clauses, population, individuals, stringSize);
         int bestFitness = findMaxFitness(fitnessList, individuals);
         int worstFitness = findMinFitness(fitnessList, individuals);
         

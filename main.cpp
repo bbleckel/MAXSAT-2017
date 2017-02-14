@@ -200,7 +200,8 @@ int main (int argc, char** argv) {
         // call GA
     } else {
         // call PBIL
-        PBIL_MAXSAT(individuals, posRate, negRate, pM, mutAmnt, generations, 10);
+        // last argument, "stringSize", should be numVariables, one entry for each variable, right   ?
+        PBIL_MAXSAT(clauses, individuals, posRate, negRate, pM, mutAmnt, generations, numVariables);
     }
     
     

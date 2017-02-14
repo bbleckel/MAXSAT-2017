@@ -4,6 +4,9 @@
 #include <string>
 #include <ctime>
 
+
+// possible improvement: rewrite to have PBIL class
+
 using namespace std;
 
 void printSolution(int* solution, int stringSize) {
@@ -138,9 +141,9 @@ void PBIL_MAXSAT(int individuals, double posRate, double negRate, double pM, dou
         // mutate!
         mutatePV(PV, pM, mutAmnt);
         
-        cout << "Printing best then worst solutions..." << endl;
-        printSolution(population[bestFitness], stringSize);
-        printSolution(population[worstFitness], stringSize);
+//        cout << "Printing best then worst solutions..." << endl;
+//        printSolution(population[bestFitness], stringSize);
+//        printSolution(population[worstFitness], stringSize);
         
         genRemaining--;
     }

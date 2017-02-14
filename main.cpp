@@ -53,47 +53,81 @@ int main (int argc, char** argv) {
     double posRate;
     double negRate;
     double mutAmnt;
-
+    
+    // holds all clauses
+    vector< vector<int> > clauses;
+    int numVariables;
+    int numClauses;
+    
     if(argc != 9) {
         printInfo();
         exit(1);
     } else {
-      // read in file
-      ifstream inputFile;
-      inputFile.open(argv[1], ios::in);
-      if(!inputFile.is_open()) {
-        cerr << "ERROR: Could not open file" << endl;
-      } else {
-        while(getline(inputFile, line)) {
-          if(line.front() == 'c') {
-            // line is a comment, should not be included in algorithm
-          } else if (line.front() == 'p') {
-            // the line just before the data begins
-            // contains information about the data if we want it
-          } else if (line.back() == '0'){
-            // line should be included in data we are using
-          }
+        // read in file
+        string line;
+        ifstream inputFile;
+        inputFile.open(argv[1], ios::in);
+        if(!inputFile.is_open()) {
+            cerr << "ERROR: Could not open file" << endl;
+        } else {
+            while(getline(inputFile, line)) {
+                if(line.front() == 'c') {
+                    // line is a comment, should not be included in algorithm
+                    cout << line << endl;
 
-          cout << line << endl;
+                } else if (line.front() == 'p') {
+                    // the line just before the data begins
+                    // contains information about the data if we want it
+                    cout << line << endl;
+                    
+                    string entry;
+                    string delimiter = " ";
+                    // get rid of "p" and "cnf"
+                    entry = line.substr(0, line.find(delimiter));
+                    line.erase(0, line.find(delimiter) + delimiter.length());
+                    entry = line.substr(0, line.find(delimiter));
+                    line.erase(0, line.find(delimiter) + delimiter.length());
+                    
+                    // save number of variables & clauses
+                    numVariables = stoi(line.substr(0, line.find(delimiter)));
+                    line.erase(0, line.find(delimiter) + delimiter.length());
+                    
+                    numClauses = stoi(line.substr(0, line.find(delimiter)));
+                    line.erase(0, line.find(delimiter) + delimiter.length());
+                    
+                    cout << numVariables << " variables and " << numClauses << " clauses!" << endl;
+
+                } else if (line.back() == '0'){
+                    // line should be included in data we are using
+                    string entry;
+                    string delimiter = " ";
+                    vector<int> clause;
+                    while((entry = line.substr(0, line.find(delimiter))) != "0") {
+                        clause.push_back(stoi(entry));
+                        line.erase(0, line.find(delimiter) + delimiter.length());
+                    }
+                    clauses.push_back(clause);
+                }
+            }
+            inputFile.close();
         }
-        inputFile.close();
-      }
+        
+        cout << "Printing clauses:" << endl;
+        for(int i = 0; i < clauses.size(); i++) {
+            for(int j = 0; j < clauses[0].size(); j++) {
+                // is it possible for clauses[0].size() to cause error in extreme cases?
+                cout << clauses[i].at(j) << ", ";
+            }
+            cout << "\n";
+        }
 
-        // deal with reading file
-        //        ifstream fileName(argv[1]);
-        //        if(!fileName.is_open()) {
-        //            cout << "ERROR: Could not open file" << endl;
-        //        } else {
-        //            char x;
-        //            while(fileName.get(x)) {
-        //                // potentially useful file reading implementation from cachesim 2330
-        //                cout << x;
-        //            }
-        //        }
         // type of algorithm determines how other arguments are interpreted
-
+        
         // I don't think we want the ! in these
+        // To commenter above: there should be; strcmp returns 0 if the strings are identical, so !strcmp
+        // is true if the strings are identical
         if(!strcmp(argv[8], "g")) {
+            cout << "doing genetic" << endl;
             algType = 0;
         } else if(!strcmp(argv[8], "p")) {
             algType = 1;
@@ -101,7 +135,7 @@ int main (int argc, char** argv) {
             cout << "Invalid eighth argument specifying algorithm type. Please use:" << endl;
             cout << "    algorithm    = type of algorithm (g or p) (string)" << endl;
         }
-
+        
         // introduces some possible errors, like entering "ts" for selection but "p" for algorithm; that error won't be caught
         if(!algType) {
             // assign relevant GA variables
@@ -127,7 +161,7 @@ int main (int argc, char** argv) {
             }
             pC = atof(argv[5]);
             pM = atof(argv[6]);
-
+            
         } else {
             // assign relevant PBIL variables
             posRate = atof(argv[3]);
@@ -135,12 +169,12 @@ int main (int argc, char** argv) {
             pM = atof(argv[5]);
             mutAmnt = atof(argv[6]);
         }
-
+        
         individuals = atoi(argv[2]);
         generations = atoi(argv[7]);
     }
-
-
+    
+    
     // print correct input
     cout << "Your input values:" << endl;
     if(!algType) {
@@ -151,7 +185,7 @@ int main (int argc, char** argv) {
         cout << "    PROB_CROSS      =  " << pC << endl;
         cout << "    PROB_MUT        =  " << pM << endl;
         cout << "    MAX_GEN         =  " << generations << endl;
-        cout << "    ALG_TYPE        =  " << algType << endl;
+        cout << "    ALG_TYPE        =  GA" << endl;
     } else {
         cout << "    POPULATION_SIZE =  " << individuals << endl;;
         cout << "    POS_RATE        =  " << posRate << endl;;
@@ -159,15 +193,15 @@ int main (int argc, char** argv) {
         cout << "    PROB_MUT        =  " << pM << endl;
         cout << "    AMNT_MUT        =  " << mutAmnt << endl;
         cout << "    MAX_GEN         =  " << generations << endl;
-        cout << "    ALG_TYPE        =  " << algType << endl;
+        cout << "    ALG_TYPE        =  PBIL" << endl;
     }
-
+    
     if(!algType) {
         // call GA
     } else {
         // call PBIL
         PBIL_MAXSAT(individuals, posRate, negRate, pM, mutAmnt, generations, 10);
     }
-
-
+    
+    
 } // end main

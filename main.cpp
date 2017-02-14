@@ -112,14 +112,14 @@ int main (int argc, char** argv) {
             inputFile.close();
         }
         
-        cout << "Printing clauses:" << endl;
-        for(int i = 0; i < clauses.size(); i++) {
-            for(int j = 0; j < clauses[0].size(); j++) {
-                // is it possible for clauses[0].size() to cause error in extreme cases?
-                cout << clauses[i].at(j) << ", ";
-            }
-            cout << "\n";
-        }
+//        cout << "Printing clauses:" << endl;
+//        for(int i = 0; i < clauses.size(); i++) {
+//            for(int j = 0; j < clauses[0].size(); j++) {
+//                // is it possible for clauses[0].size() to cause error in extreme cases?
+//                cout << clauses[i].at(j) << ", ";
+//            }
+//            cout << "\n";
+//        }
 
         // type of algorithm determines how other arguments are interpreted
         

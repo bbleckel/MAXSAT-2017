@@ -9,18 +9,18 @@
 
 using namespace std;
 
-void printSolution(int* solution, int stringSize) {
+void printSolution(int* solution, int numVariables) {
     cout << "[";
-    for(int i = 0; i < stringSize - 1; i++) {
+    for(int i = 0; i < numVariables - 1; i++) {
         cout << solution[i] << ", ";
     }
-    cout << solution[stringSize - 1] << "]" << endl;
+    cout << solution[numVariables - 1] << "]" << endl;
 }
 
-void printPopulation(int** population, int size, int stringSize) {
-    cout << "Printing population (" << size << " individuals, " << stringSize << " size solution)..." << endl;
+void printPopulation(int** population, int size, int numVariables) {
+    cout << "Printing population (" << size << " individuals, " << numVariables << " size solution)..." << endl;
     for(int i = 0; i < size; i++) {
-        printSolution(population[i], stringSize);
+        printSolution(population[i], numVariables);
     }
 }
 
@@ -34,7 +34,6 @@ void printPV(vector<double> PV) {
 }
 
 void mutatePV(vector<double> &PV, double pM, double mutAmnt) {
-    srand(time(NULL));
     int mutRand;
     int dirRand;
     int mutDirection;
@@ -56,12 +55,29 @@ void mutatePV(vector<double> &PV, double pM, double mutAmnt) {
 int countSatClauses(vector< vector<int> > clauses, int* solution) {
     int count = 0;
     // each solution requires O(numClauses * numVariables) to count satisfied clauses
+    
+    //iterate through clauses
     for(int i = 0; i < clauses.size(); i++) {
+        // iterate through variables of each clase
         for(int j = 0; j < clauses[0].size(); j++) {
             /* solution value of 0 and negative variable in clause or
              solution value of 1 and positive variable in clause */
+            int value;
             if(clauses[i][j] < 0) {
-                cout << "Clause " << i << " has variable " << j << " negative!" << endl;
+                value = -1 * clauses[i][j];
+
+                // note: should never be a variable 0, as 0's are reserved for end of line
+                if(!solution[value - 1]) {
+                    count++;
+                    break;
+                }
+            } else {
+                value = clauses[i][j];
+
+                if(solution[value - 1]) {
+                    count++;
+                    break;
+                }
             }
         }
     }
@@ -69,18 +85,14 @@ int countSatClauses(vector< vector<int> > clauses, int* solution) {
     return count;
 }
 
-int* evalFitness(vector< vector<int> > clauses, int** population, int size, int stringSize) {
+int* evalFitness(vector< vector<int> > clauses, int** population, int size, int numVariables) {
     int* fitnessList = (int*) malloc(sizeof(int) * size);
     int fitness;
     
-    srand(time(NULL));
     // iterate through solutions
     for(int i = 0; i < size; i++) {
         // evaluate fitness of each candidate solution
-        // (temporarily random)
-        countSatClauses(clauses, population[i]);
-        fitness = rand() % 100;
-        fitnessList[i] = fitness;
+        fitnessList[i] = countSatClauses(clauses, population[i]);
     }
     return fitnessList;
 }
@@ -109,28 +121,31 @@ int findMinFitness(int* fitnessList, int size) {
     return minIndex;
 }
 
-void PBIL_MAXSAT(vector< vector<int> > clauses, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int stringSize) {
+void PBIL_MAXSAT(vector< vector<int> > clauses, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int numVariables) {
     cout << "Solving with PBIL..." << endl;
     
     vector<double> PV;
     
+    srand(time(NULL));
+
+    
     // initialize PV
-    for(int i = 0; i < stringSize; i++) {
+    for(int i = 0; i < numVariables; i++) {
         PV.push_back(0.5);
     }
     
     int randNum;
-    int** population = (int**) malloc(sizeof(int) * individuals * stringSize);
+    int** population = (int**) malloc(sizeof(int) * individuals * numVariables);
     for(int i = 0; i < individuals; i++) {
-        population[i] = (int*) malloc(sizeof(int) * stringSize);
+        population[i] = (int*) malloc(sizeof(int) * numVariables);
     }
     int genRemaining = generations;
+
+    int* fitnessList;
     while(genRemaining >= 0) {
-        
         // create population
-        srand(time(NULL));
         for(int i = 0; i < individuals; i++) {
-            for(int j = 0; j < stringSize; j++) {
+            for(int j = 0; j < numVariables; j++) {
                 randNum = rand() % 100;
                 if((double) randNum / 100 < PV[j]) {
                     population[i][j] = 1;
@@ -139,11 +154,11 @@ void PBIL_MAXSAT(vector< vector<int> > clauses, int individuals, double posRate,
                 }
             }
         }
-        
-        int* fitnessList = evalFitness(clauses, population, individuals, stringSize);
+
+        fitnessList = evalFitness(clauses, population, individuals, numVariables);
         int bestFitness = findMaxFitness(fitnessList, individuals);
         int worstFitness = findMinFitness(fitnessList, individuals);
-        
+
         // update PV towards best solution
         for(int i = 0; i < PV.size(); i++) {
             PV[i] = PV[i] * (1.0 - posRate) + population[bestFitness][i] * posRate;
@@ -159,13 +174,31 @@ void PBIL_MAXSAT(vector< vector<int> > clauses, int individuals, double posRate,
         // mutate!
         mutatePV(PV, pM, mutAmnt);
         
-//        cout << "Printing best then worst solutions..." << endl;
-//        printSolution(population[bestFitness], stringSize);
-//        printSolution(population[worstFitness], stringSize);
-        
         genRemaining--;
+        if(genRemaining % (generations / 20) == 0) {
+            // print most clauses satisfied each 10 generations
+            cout << "(Generation " << generations - genRemaining << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
+        }
     }
-    printPopulation(population, individuals, stringSize);
+    
+    // for test purposes, show archetype solution
+    int* sol = (int*) malloc(sizeof(int) * numVariables);
+    for(int i = 0; i < numVariables; i++) {
+        if(PV[i] > 0.5) {
+            sol[i] = 1;
+        } else {
+            sol[i] = 0;
+        }
+    }
+    
+    
+    
+    cout << "Best solution satisfied " << countSatClauses(clauses, population[findMaxFitness(fitnessList, individuals)]) << " of " << clauses.size() << " clauses" << endl;
+    cout << "Archetypical solution satisfied " << countSatClauses(clauses, sol) << " of " << clauses.size() << " clauses:" << endl;
+    printSolution(sol, numVariables);
+
+    
+//    printPopulation(population, individuals, numVariables);
     printPV(PV);
     
     // to free: fitnessList, population, PV

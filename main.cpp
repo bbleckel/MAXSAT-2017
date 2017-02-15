@@ -4,7 +4,8 @@
 #include <unistd.h>
 #include <string>
 #include <fstream>
-#include "PBIL.h"
+//#include "PBIL.h"
+#include "MAXSAT.h"
 
 using namespace std;
 // used to get target string at runtime, if desired
@@ -111,21 +112,10 @@ int main (int argc, char** argv) {
             }
             inputFile.close();
         }
-        
-//        cout << "Printing clauses:" << endl;
-//        for(int i = 0; i < clauses.size(); i++) {
-//            for(int j = 0; j < clauses[0].size(); j++) {
-//                // is it possible for clauses[0].size() to cause error in extreme cases?
-//                cout << clauses[i].at(j) << ", ";
-//            }
-//            cout << "\n";
-//        }
 
         // type of algorithm determines how other arguments are interpreted
         
-        // I don't think we want the ! in these
-        // To commenter above: there should be; strcmp returns 0 if the strings are identical, so !strcmp
-        // is true if the strings are identical
+
         if(!strcmp(argv[8], "g")) {
             cout << "doing genetic" << endl;
             algType = 0;
@@ -200,9 +190,8 @@ int main (int argc, char** argv) {
         // call GA
     } else {
         // call PBIL
-        // last argument, "stringSize", should be numVariables, one entry for each variable, right   ?
-        PBIL_MAXSAT(clauses, individuals, posRate, negRate, pM, mutAmnt, generations, numVariables);
+
+        MaxSat solver(clauses, individuals, posRate, negRate, pM, mutAmnt, generations, numVariables);
+        solver.solvePBIL();
     }
-    
-    
 } // end main

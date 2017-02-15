@@ -4,14 +4,14 @@ CC = g++
 PROGS = main
 default: $(PROGS)
 
-main: main.o PBIL.o
-	$(CC) $(CPPFLAGS) -o $@ main.o PBIL.o
+main: main.o MAXSAT.o
+	$(CC) $(CPPFLAGS) -o $@ main.o MAXSAT.o
 
-main.o: main.cpp PBIL.h
+main.o: main.cpp MAXSAT.h
 	$(CC) -c main.cpp -o $@
 
-PBIL.o: PBIL.cpp PBIL.h
-	$(CC) -c PBIL.cpp -o $@
+MAXSAT.o: MAXSAT.cpp MAXSAT.h
+	$(CC) -c MAXSAT.cpp -o $@
 
 clean:
 	rm *.o

@@ -15,8 +15,8 @@
 
 using namespace std;
 
-vector<vector<int>> generateRandomPopulation(int individuals, int numVariables) {
-	vector<vector<int>> randPopulationVect;
+vector< vector<int> > generateRandomPopulation(int individuals, int numVariables) {
+	vector< vector<int> > randPopulationVect;
 	
 	int randNum;
 	for (int i = 0; i < individuals; i++) {

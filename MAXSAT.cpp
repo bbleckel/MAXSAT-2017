@@ -26,6 +26,7 @@ MaxSat::~MaxSat() {
     free(fitnessList);
     free(population);
     // delete vectors?
+    cout << "Freeing MaxSat variables. Goodbye!" << endl;
 }
 
 void MaxSat::initPV() {

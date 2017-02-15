@@ -25,8 +25,7 @@ MaxSat::~MaxSat() {
     // free malloc'ed variables
     free(fitnessList);
     free(population);
-    free(PV);
-    free(clauses);
+    // delete vectors?
 }
 
 void MaxSat::initPV() {

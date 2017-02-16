@@ -185,6 +185,8 @@ int main (int argc, char** argv) {
 
     if(!algType) {
         // call GA
+		MaxSat solver(clauses, individuals, selection, crossover, pC, pM, generations, numVariables);
+		solver.solveGA();
     } else {
         // call PBIL
 

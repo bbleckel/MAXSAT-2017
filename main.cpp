@@ -3,6 +3,8 @@
 #include <ctime>
 #include <unistd.h>
 #include <string>
+#include <string.h>
+#include <stdio.h>
 #include <fstream>
 //#include "PBIL.h"
 #include "MAXSAT.h"
@@ -12,34 +14,34 @@ using namespace std;
 //private static Scanner scan = new Scanner(System.in);
 
 void printInfo() {
-	cout << endl;
-	cout << "Usage:\nFor Genetic Algorithms:\n./main file_name individuals selection crossover pC pM generations algorithm" << endl;
-	cout << "    file_name    = name of file from which to read (string)" << endl;
-	cout << "    individuals  = number of individuals in population (int)" << endl;
-	cout << "    selection    = type of selection of breeding pool (string):" << endl;
-	cout << "                     ts   = tournament selection - implies ts1" << endl;
-	cout << "                            ts1 = same individual cannot compete against self" << endl;
-	cout << "                            ts2 = same individual can compete against self" << endl;
-	cout << "                     rs   = rank-based selection" << endl;
-	cout << "                     bs   = Boltzmann selection" << endl;
-	cout << "    crossover    = crossover method (string):" << endl;
-	cout << "                     1c   = 1-point crossover" << endl;
-	cout << "                     2c   = 2-point crossover" << endl;
-	cout << "                     uc   = uniform crossover" << endl;
-	cout << "    pC           = crossover probability (double)" << endl;
-	cout << "    pM           = mutation probability (double)" << endl;
-	cout << "    generations  = max number of generations to run (int)" << endl;
-	cout << "    algorithm    = type of algorithm (g or p) (string)" << endl;
-	cout << "\nFor PBIL:\n./main file_name individuals pos_learning_rate neg_learning_rate mutation_prob mutation_amnt generations algorithm" << endl;
-	cout << "    file_name          = name of file from which to read (string)" << endl;
-	cout << "    individuals        = number of individuals in population (int)" << endl;
-	cout << "    pos_learning_rate  = positive learning rate for best-individual update (double):" << endl;
-	cout << "    neg_learning_rate  = negative learning rate for worst-individual update (double):" << endl;
-	cout << "    mutation_prob      = mutation probability (double)" << endl;
-	cout << "    mutation_amnt      = amount the PV is changed if mutated (double)" << endl;
-	cout << "    generations        = max number of generations to run (int)" << endl;
-	cout << "    algorithm          = type of algorithm (g or p) (string)" << endl;
-	cout << endl;
+    cout << endl;
+    cout << "Usage:\nFor Genetic Algorithms:\n./main file_name individuals selection crossover pC pM generations algorithm" << endl;
+    cout << "    file_name    = name of file from which to read (string)" << endl;
+    cout << "    individuals  = number of individuals in population (int)" << endl;
+    cout << "    selection    = type of selection of breeding pool (string):" << endl;
+    cout << "                     ts   = tournament selection - implies ts1" << endl;
+    cout << "                            ts1 = same individual cannot compete against self" << endl;
+    cout << "                            ts2 = same individual can compete against self" << endl;
+    cout << "                     rs   = rank-based selection" << endl;
+    cout << "                     bs   = Boltzmann selection" << endl;
+    cout << "    crossover    = crossover method (string):" << endl;
+    cout << "                     1c   = 1-point crossover" << endl;
+    cout << "                     2c   = 2-point crossover" << endl;
+    cout << "                     uc   = uniform crossover" << endl;
+    cout << "    pC           = crossover probability (double)" << endl;
+    cout << "    pM           = mutation probability (double)" << endl;
+    cout << "    generations  = max number of generations to run (int)" << endl;
+    cout << "    algorithm    = type of algorithm (g or p) (string)" << endl;
+    cout << "\nFor PBIL:\n./main file_name individuals pos_learning_rate neg_learning_rate mutation_prob mutation_amnt generations algorithm" << endl;
+    cout << "    file_name          = name of file from which to read (string)" << endl;
+    cout << "    individuals        = number of individuals in population (int)" << endl;
+    cout << "    pos_learning_rate  = positive learning rate for best-individual update (double):" << endl;
+    cout << "    neg_learning_rate  = negative learning rate for worst-individual update (double):" << endl;
+    cout << "    mutation_prob      = mutation probability (double)" << endl;
+    cout << "    mutation_amnt      = amount the PV is changed if mutated (double)" << endl;
+    cout << "    generations        = max number of generations to run (int)" << endl;
+    cout << "    algorithm          = type of algorithm (g or p) (string)" << endl;
+    cout << endl;
 }
 
 
@@ -54,12 +56,12 @@ int main (int argc, char** argv) {
     double posRate;
     double negRate;
     double mutAmnt;
-    
+
     // holds all clauses
     vector< vector<int> > clauses;
     int numVariables;
     int numClauses;
-    
+
     if(argc != 9) {
         printInfo();
         exit(1);
@@ -80,7 +82,7 @@ int main (int argc, char** argv) {
                     // the line just before the data begins
                     // contains information about the data if we want it
                     cout << line << endl;
-                    
+
                     string entry;
                     string delimiter = " ";
                     // get rid of "p" and "cnf"
@@ -88,14 +90,14 @@ int main (int argc, char** argv) {
                     line.erase(0, line.find(delimiter) + delimiter.length());
                     entry = line.substr(0, line.find(delimiter));
                     line.erase(0, line.find(delimiter) + delimiter.length());
-                    
+
                     // save number of variables & clauses
                     numVariables = stoi(line.substr(0, line.find(delimiter)));
                     line.erase(0, line.find(delimiter) + delimiter.length());
-                    
+
                     numClauses = stoi(line.substr(0, line.find(delimiter)));
                     line.erase(0, line.find(delimiter) + delimiter.length());
-                    
+
                     cout << numVariables << " variables and " << numClauses << " clauses!" << endl;
 
                 } else if (line.back() == '0'){
@@ -114,7 +116,7 @@ int main (int argc, char** argv) {
         }
 
         // type of algorithm determines how other arguments are interpreted
-        
+
 
         if(!strcmp(argv[8], "g")) {
             cout << "doing genetic" << endl;
@@ -125,7 +127,7 @@ int main (int argc, char** argv) {
             cout << "Invalid eighth argument specifying algorithm type. Please use:" << endl;
             cout << "    algorithm    = type of algorithm (g or p) (string)" << endl;
         }
-        
+
         // introduces some possible errors, like entering "ts" for selection but "p" for algorithm; that error won't be caught
         if(!algType) {
             // assign relevant GA variables
@@ -151,7 +153,7 @@ int main (int argc, char** argv) {
             }
             pC = atof(argv[5]);
             pM = atof(argv[6]);
-            
+
         } else {
             // assign relevant PBIL variables
             posRate = atof(argv[3]);
@@ -159,12 +161,12 @@ int main (int argc, char** argv) {
             pM = atof(argv[5]);
             mutAmnt = atof(argv[6]);
         }
-        
+
         individuals = atoi(argv[2]);
         generations = atoi(argv[7]);
     }
-    
-    
+
+
     // print correct input
     cout << "Your input values:" << endl;
     if(!algType) {
@@ -185,7 +187,7 @@ int main (int argc, char** argv) {
         cout << "    MAX_GEN         =  " << generations << endl;
         cout << "    ALG_TYPE        =  PBIL" << endl;
     }
-    
+
     if(!algType) {
         // call GA
     } else {

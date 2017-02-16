@@ -18,8 +18,8 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, double posRate, d
 	for(int i = 0; i < individuals; i++) {
 		population[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
-    cout << "Created class for PBIL" << endl;
-
+	cout << "Created class for PBIL" << endl;
+	
 }
 
 MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, string selection, string crossover, double pC, double pM, int generations, int numVariables) {
@@ -37,8 +37,8 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, string selection,
 	for(int i = 0; i < individuals; i++) {
 		population[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
-    cout << "Created class for GA" << endl;
-
+	cout << "Created class for GA" << endl;
+	
 }
 
 MaxSat::~MaxSat() {
@@ -250,16 +250,80 @@ void MaxSat::solvePBIL() {
 	// to free: fitnessList, population, PV
 }
 
-void MaxSat::solveGA() {
-	cout << "Solving with GA..." << endl;
+void MaxSat::selectRanking() {
 	
-	srand(time(NULL));
+}
+
+void MaxSat::selectTournament() {
 	
+}
+
+void MaxSat::selectBoltzman() {
+	
+}
+
+void MaxSat::onePCross() {
+	
+}
+
+void MaxSat::uniformCross() {
+	
+}
+
+void MaxSat::mutateOffspring() {
+	
+}
+
+void MaxSat::initPopulation() {
 	int randNum;
 	for (int i = 0; i < individuals; i++) {
 		for (int j = 0; j < numVariables; j++) {
 			randNum = rand() % 2;
 			population[i][j] = randNum;
 		}
+	}
+}
+
+void MaxSat::solveGA() {
+	cout << "Solving with GA..." << endl;
+	
+	srand(time(NULL));
+	
+	initPopulation();
+	
+	for (int i = 0; i < generations; i++) {
+		evalFitness();
+		
+		int maxFit = findMaxFitness();
+		int minFit = findMinFitness();
+		
+		switch (selection) {
+			case "rs":
+				selectRanking();
+				break;
+			case "ts":
+				selectTournament();
+				break;
+			case "bs":
+				selectBoltzman();
+				break;
+			default:
+				cout << "error in selection: no valid selection method specified" << endl;
+				exit();
+		}
+		
+		switch (crossover) {
+			case "1c":
+				onePCross();
+				break;
+			case "uc":
+				uniformCross();
+				break;
+			default:
+				cout << "error in crossover: no valid crossover method specified" << endl;
+				exit();
+		}
+		
+		mutateOffspring();
 	}
 }

@@ -4,8 +4,13 @@ CC = g++
 PROGS = main
 default: $(PROGS)
 
+<<<<<<< Updated upstream
 main: main.o MAXSAT.o
 	$(CC) $(CPPFLAGS) -o $@ main.o MAXSAT.o
+=======
+main: main.o MAXSAT.o GA.o
+	$(CC) $(CPPFLAGS) -o $@ main.o MAXSAT.o GA.o
+>>>>>>> Stashed changes
 
 main.o: main.cpp MAXSAT.h
 	$(CC) -c main.cpp -o $@

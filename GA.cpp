@@ -15,8 +15,13 @@
 
 using namespace std;
 
+<<<<<<< Updated upstream
 vector< vector<int> > generateRandomPopulation(int individuals, int numVariables) {
 	vector< vector<int> > randPopulationVect;
+=======
+vector< vector< int > > generateRandomPopulation(int individuals, int numVariables) {
+	vector< vector< int > > randPopulationVect;
+>>>>>>> Stashed changes
 	
 	int randNum;
 	for (int i = 0; i < individuals; i++) {
@@ -29,7 +34,7 @@ vector< vector<int> > generateRandomPopulation(int individuals, int numVariables
 	return randPopulationVect;
 }
 
-int countSatClauses(vector< vector<int> > clauses, int* solution) {
+int countSatClauses(vector< vector<int> > clauses, vector< vector< int > > solution) {
 	int count = 0;
 	// each solution requires O(numClauses * numVariables) to count satisfied clauses
 	
@@ -62,7 +67,7 @@ int countSatClauses(vector< vector<int> > clauses, int* solution) {
 	return count;
 }
 
-int* evalFitness(vector< vector<int> > clauses, vector<vector<int>> population, int size, int numVariables) {
+int* evalFitness(vector< vector<int> > clauses, vector< int > population, int size, int numVariables) {
 	int* fitnessList = (int*) malloc(sizeof(int) * size);
 	int fitness;
 	
@@ -74,18 +79,18 @@ int* evalFitness(vector< vector<int> > clauses, vector<vector<int>> population, 
 	return fitnessList;
 }
 
-void GA_MAXSAT(vector< vector<int>> clauses, int individuals, string selectionMethod, string crossOverMethod, double pC, double pM, int generations, int numVariables) {
+void GA_MAXSAT(vector< vector< int > > clauses, int individuals, string selectionMethod, string crossOverMethod, double pC, double pM, int generations, int numVariables) {
 	cout << "Solving with GA..." << endl;
 	
 	srand(time(NULL));
 
-	vector<vector<int>> population = generateRandomPopulation(individuals, numVariables);
+	vector< vector< int > > population = generateRandomPopulation(individuals, numVariables);
 	
 	for (int i = 0; i < generations; i++) {
-		select(clauses, selectionMethod, individuals);
+		//select(clauses, selectionMethod, individuals);
 		
-		mate();
+		//mate();
 		
-		mutate();
+		//mutate();
 	}
 }

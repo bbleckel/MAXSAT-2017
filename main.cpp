@@ -3,15 +3,10 @@
 #include <ctime>
 #include <unistd.h>
 #include <string>
-#include <string.h>
-#include <stdio.h>
 #include <fstream>
-//#include "PBIL.h"
 #include "MAXSAT.h"
 
 using namespace std;
-// used to get target string at runtime, if desired
-//private static Scanner scan = new Scanner(System.in);
 
 void printInfo() {
     cout << endl;

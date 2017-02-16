@@ -14,6 +14,7 @@ class MaxSat {
 public:
     // constructor/destructor
     MaxSat(vector< vector<int> > clauses, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int numVariables);
+	MaxSat(vector< vector<int> > clauses, int individuals, string selection, string crossover, double pC, double pM, int generations, int numVariables);
     ~MaxSat();
     void initPV();
     
@@ -42,8 +43,11 @@ private:
     int individuals;
     double posRate;
     double negRate;
+	double pC;
     double pM;
     double mutAmnt;
+	string selection;
+	string crossover;
     int generations;
     int numVariables;
     int* fitnessList;

@@ -15,13 +15,8 @@
 
 using namespace std;
 
-<<<<<<< Updated upstream
-vector< vector<int> > generateRandomPopulation(int individuals, int numVariables) {
-	vector< vector<int> > randPopulationVect;
-=======
 vector< vector< int > > generateRandomPopulation(int individuals, int numVariables) {
 	vector< vector< int > > randPopulationVect;
->>>>>>> Stashed changes
 	
 	int randNum;
 	for (int i = 0; i < individuals; i++) {
@@ -49,14 +44,14 @@ int countSatClauses(vector< vector<int> > clauses, vector< vector< int > > solut
 				value = -1 * clauses[i][j];
 				
 				// note: should never be a variable 0, as 0's are reserved for end of line
-				if(!solution[value - 1]) {
+				if(!solution.at(value - 1)) {
 					count++;
 					break;
 				}
 			} else {
 				value = clauses[i][j];
 				
-				if(solution[value - 1]) {
+				if(solution.at(value - 1)) {
 					count++;
 					break;
 				}
@@ -67,7 +62,7 @@ int countSatClauses(vector< vector<int> > clauses, vector< vector< int > > solut
 	return count;
 }
 
-int* evalFitness(vector< vector<int> > clauses, vector< int > population, int size, int numVariables) {
+int* evalFitness(vector< vector<int> > clauses, vector< vector < int > population, int size, int numVariables) {
 	int* fitnessList = (int*) malloc(sizeof(int) * size);
 	int fitness;
 	

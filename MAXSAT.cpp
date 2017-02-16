@@ -18,11 +18,11 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, double posRate, d
 	for(int i = 0; i < individuals; i++) {
 		population[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
-	
+    cout << "Created class for PBIL" << endl;
+
 }
 
 MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, string selection, string crossover, double pC, double pM, int generations, int numVariables) {
-	
 	this->clauses = clauses;
 	this->individuals = individuals;
 	this->selection = selection;
@@ -37,6 +37,8 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, string selection,
 	for(int i = 0; i < individuals; i++) {
 		population[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
+    cout << "Created class for GA" << endl;
+
 }
 
 MaxSat::~MaxSat() {
@@ -255,7 +257,7 @@ void MaxSat::solveGA() {
 	
 	int randNum;
 	for (int i = 0; i < individuals; i++) {
-		for (int j = 0; i < numVariables; j++) {
+		for (int j = 0; j < numVariables; j++) {
 			randNum = rand() % 2;
 			population[i][j] = randNum;
 		}

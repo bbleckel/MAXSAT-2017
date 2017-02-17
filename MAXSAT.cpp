@@ -301,7 +301,7 @@ void MaxSat::selectRanking() {
 			}
 		}
 	}
-	
+
 	free(rankList);
 }
 
@@ -392,7 +392,32 @@ void MaxSat::onePCross() {
 }
 
 void MaxSat::uniformCross() {
-	
+	for (int i = 0; i < individuals; i++) {
+		int randNum = rand();
+		if (randNum < pC) {
+			int* parent1 = breedingPool[i];
+			int* parent2;
+			if (i+1 == individuals) {
+				parent2 = breedingPool[0];
+			} else {
+				parent2 = breedingPool[i+1];
+			}
+			int* offspring = (int*) malloc(sizeof(int) * numVariables);
+
+			for (int j = 0; j < numVariables; j++) {
+				int pointProb = rand();
+				if (pointProb < 0.5) {
+					offspring[j] = parent1[j];
+				} else {
+					offspring[j] = parent2[j];
+				}
+			}
+			arrayCopy(population[i], offspring, numVariables);
+			free(offspring);
+		} else {
+			arrayCopy(population[i], breedingPool[i], numVariables);
+		}
+	}
 }
 
 void MaxSat::mutateOffspring() {
@@ -429,9 +454,9 @@ void MaxSat::solveGA() {
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
-	
+
 	printPopulation();
-	
+
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
         if(!selection.compare("rs")) {

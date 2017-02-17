@@ -17,15 +17,26 @@ public:
 	MaxSat(vector< vector<int> > clauses, int individuals, string selection, string crossover, double pC, double pM, int generations, int numVariables);
     ~MaxSat();
     void initPV();
+	void initPopulation();
     
     // fitness
     int countSatClauses(int* solution);
     void evalFitness();
     int findMaxFitness();
     int findMinFitness();
+	
+	// selection
+	void selectBoltzman();
+	void selectRanking();
+	void selectTournament();
+	
+	// crossover
+	void onePCross();
+	void uniformCross();
     
     // mutation
     void mutatePV();
+	void mutateOffspring();
     
     // child selection
     void select(vector< vector<int> > clauses, int method, int individuals); // method is int rather than parsing char*

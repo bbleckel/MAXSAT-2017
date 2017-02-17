@@ -2,7 +2,8 @@
 #include <iostream>
 #include <ctime>
 #include <unistd.h>
-#include <string>
+// #include <string>
+#include <string.h>
 #include <fstream>
 #include "MAXSAT.h"
 

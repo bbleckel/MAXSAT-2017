@@ -362,11 +362,11 @@ void MaxSat::selectBoltzman() {
 void MaxSat::onePCross() {
 
 	for (int i = 0; i < individuals; i += 2) {
-		int randNum = new rand();
+		int randNum = rand();
 		if (randNum < pC){
 			int* parent1 = breedingPool[i];
 			int* parent2 = breedingPool[i+1];
-			int crossPointRand = new rand();
+			int crossPointRand = rand();
 			int crossPoint = (int) (crossPointRand * numVariables);
 			int* offspring1 = (int*) malloc(sizeof(int) * numVariables);
 			int* offspring2 = (int*) malloc(sizeof(int) * numVariables);
@@ -380,13 +380,19 @@ void MaxSat::onePCross() {
 					offspring2[j] = parent1[j];
 				}
 			}
+			arrayCopy(population[i], offspring1, numVariables);
+			arrayCopy(population[i+1], offspring2, numVariables);
+			free(offspring1);
+			free(offspring2);
+		} else {
+			arrayCopy(population[i], breedingPool[i], numVariables);
+			arrayCopy(population[i+1], breedingPool[i+1], numVariables);
 		}
-
 	}
 }
 
 void MaxSat::uniformCross() {
-
+	
 }
 
 void MaxSat::mutateOffspring() {

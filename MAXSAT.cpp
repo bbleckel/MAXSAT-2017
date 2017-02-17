@@ -263,16 +263,27 @@ void MaxSat::selectTournament() {
 	for (int i = 0; i < individuals; i++) {
 		randNum = rand() % individuals;
 		int* individual1 = population[randNum];
+        cout << "Trying1 " << i << endl;
+
 		int fitness1 = fitnessList[randNum];
+        cout << "Trying2 " << i << endl;
+
 		randNum = rand() % individuals;
 		int* individual2 = population[randNum];
+        cout << "Trying3 " << i << endl;
+
 		int fitness2 = fitnessList[randNum];
+        cout << "Trying4 " << i << endl;
+
 		
 		if (fitness1 > fitness2) {
+            cout << "1" << endl;
 			breedingPool[i] = individual1;
 		} else {
+            cout << "2" << endl;
 			breedingPool[i] = individual2;
 		}
+        cout << "Done " << endl;
 	}
 }
 
@@ -322,12 +333,9 @@ void MaxSat::solveGA() {
 	
 	initPopulation();
 	
-	for(int i = 0; i < individuals; i++) {
-		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
-	}
-	
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
+        printPopulation();
     
         if(!selection.compare("rs")) {
             selectRanking();
@@ -339,6 +347,7 @@ void MaxSat::solveGA() {
             cout << "error in selection: no valid selection method specified" << endl;
             exit(1);
         }
+        cout << "Fitness!" << endl;
 
         if(!crossover.compare("uc")) {
             onePCross();
@@ -350,5 +359,7 @@ void MaxSat::solveGA() {
         }
 
 		mutateOffspring();
+        printPopulation();
+        return;
 	}
 }

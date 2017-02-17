@@ -256,7 +256,7 @@ void MaxSat::selectRanking() {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
 	
-	for (int i = 0; i < population; i++) {
+	for (int i = 0; i < individuals; i++) {
 		
 	}
 	
@@ -272,10 +272,10 @@ int** MaxSat::selectTournament() {
 	}
 	
 	for (int i = 0; i < individuals; i++) {
-		randNum = rand() % population;
+		randNum = rand() % individuals;
 		int* individual1 = population[randNum];
 		int fitness1 = fitnessList[randNum];
-		randNum = rand() % population;
+		randNum = rand() % individuals;
 		int* individual2 = population[randNum];
 		int fitness2 = fitnessList[randNum];
 		
@@ -322,19 +322,6 @@ void MaxSat::initPopulation() {
 			population[i][j] = randNum;
 		}
 	}
-    
-    int genRemaining = generations;
-    while(genRemaining >= 0) {
-        /*
-         select(clauses, selectionMethod, individuals);
-         
-         mate();
-         
-         mutate();
-         */
-
-    }
-    
 }
 
 void MaxSat::solveGA() {
@@ -347,34 +334,27 @@ void MaxSat::solveGA() {
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
 		int** breedingPool;
-		
-		switch (selection) {
-			case "rs":
-				breedingPool = selectRanking();
-				break;
-			case "ts":
-				breedingPool = selectTournament();
-				break;
-			case "bs":
-				breedingPool = selectBoltzman();
-				break;
-			default:
-				cout << "error in selection: no valid selection method specified" << endl;
-				exit();
-		}
-		
-		switch (crossover) {
-			case "1c":
-				onePCross(breedingPool);
-				break;
-			case "uc":
-				uniformCross(breedingPool);
-				break;
-			default:
-				cout << "error in crossover: no valid crossover method specified" << endl;
-				exit();
-		}
-		
+        
+        if(!selection.compare("rs")) {
+            breedingPool = selectRanking();
+        } else if(!selection.compare("ts")) {
+            breedingPool = selectTournament();
+        } else if(!selection.compare("bs")) {
+            breedingPool = selectBoltzman();
+        } else {
+            cout << "error in selection: no valid selection method specified" << endl;
+            exit(1);
+        }
+
+        if(!crossover.compare("uc")) {
+            onePCross(breedingPool);
+        } else if(!crossover.compare("uc")) {
+            uniformCross(breedingPool);
+        } else {
+            cout << "error in crossover: no valid crossover method specified" << endl;
+            exit(1);
+        }
+
 		mutateOffspring();
 	}
 }

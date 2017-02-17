@@ -38,9 +38,6 @@ public:
     void mutatePV();
 	void mutateOffspring();
     
-    // child selection
-    void select(vector< vector<int> > clauses, int method, int individuals); // method is int rather than parsing char*
-    
     // printing
     void printSolution(int* solution);
     void printPopulation();

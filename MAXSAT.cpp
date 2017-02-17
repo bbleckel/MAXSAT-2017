@@ -250,10 +250,43 @@ void MaxSat::solvePBIL() {
 	// to free: fitnessList, population, PV
 }
 
+int cmprfnc (const void * a, const void * b) {
+	int* individual1 = (int *)a;
+	int* individual2 = (int *)b;
+	
+	return ( individual1[1] - individual2[1] );
+}
+
+void arrayCopy(int* individual, int* population) {
+	
+}
+
 void MaxSat::selectRanking() {
+	//a 2-D array to store the index and fitness of each individual
+	//this array will be sorted by fitness
+	int** rankList = (int**) malloc(sizeof(int) * individuals * numVariables);
+	for (int i = 0; i < individuals; i++) {
+		rankList[i] = (int*) malloc(sizeof(int) * numVariables);
+		
+		rankList[i][0] = i;
+		rankList[i][1] = fitnessList[i];
+	}
+	
+	//quicksort to sort the individuals by fitness
+	qsort(rankList, individuals, sizeof(int), cmprfnc);
+	
 	int i = 0;
 	while (i < individuals) {
-		
+		for (int j = 0; j < individuals; j++) {
+			int sum = (individuals * (individuals + 1))/2;
+			int probability = (j+1)/(sum);
+			
+			
+			
+			if ((i + 1) == individuals) {
+				break;
+			}
+		}
 	}
 }
 
@@ -262,10 +295,13 @@ void MaxSat::selectTournament() {
 	
 	for (int i = 0; i < individuals; i++) {
 		randNum = rand() % individuals;
-		int* individual1 = population[randNum];
+		int* individual1 = (int*) malloc(sizeof(int) * numVariables);
+		arrayCopy(individual1, population[randNum]);
 		int fitness1 = fitnessList[randNum];
+		
 		randNum = rand() % individuals;
-		int* individual2 = population[randNum];
+		int* individual2 = (int*) malloc(sizeof(int) * numVariables);
+		arrayCopy(individual2, population[randNum]);
 		int fitness2 = fitnessList[randNum];
 		
 		if (fitness1 > fitness2) {

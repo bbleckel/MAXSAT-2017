@@ -358,7 +358,7 @@ void MaxSat::selectBoltzman() {
 		}
 	}
 }
-
+// NOTE: THIS WILL ONLY WORK FOR EVEN POPULATION I THINK
 void MaxSat::onePCross() {
 
 	for (int i = 0; i < individuals; i += 2) {

@@ -253,19 +253,11 @@ void MaxSat::solvePBIL() {
 	// to free: fitnessList, population, PV
 }
 
-<<<<<<< Updated upstream
 int compare ( const void *pa, const void *pb ) {
 	const int *a = *(const int **)pa;
 	const int *b = *(const int **)pb;
-	
-	return a[1] - b[1];
-=======
-int cmprfnc (const void * a, const void * b) {
-	int* individual1 = (int *)a;
-	int* individual2 = (int *)b;
 
-	return ( individual1[1] - individual2[1] );
->>>>>>> Stashed changes
+	return a[1] - b[1];
 }
 
 void MaxSat::arrayCopy(int* arr1, int* arr2, int size) {
@@ -279,71 +271,43 @@ void MaxSat::selectRanking() {
 	//this array will be sorted by fitness
 	int** rankList = (int**) malloc(sizeof(int) * individuals  * 2);
 	for (int i = 0; i < individuals; i++) {
-<<<<<<< Updated upstream
 		rankList[i] = (int*) malloc(sizeof(int) * 2);
-		
-=======
-		rankList[i] = (int*) malloc(sizeof(int) * numVariables);
 
->>>>>>> Stashed changes
 		rankList[i][0] = i;
 		rankList[i][1] = fitnessList[i];
 	}
 
 	//quicksort to sort the individuals by fitness
-<<<<<<< Updated upstream
 	qsort(rankList, individuals, sizeof rankList[0], compare);
-	
+
 	double sum = (individuals * (individuals + 1))/2;
 	int i = 0;
 	while (i < individuals) {
 		for (int j = 0; j < individuals; j++) {
 			double probability = (j+1)/(sum);
-			
+
 			//get a random num between 0 and 1. if that number is less
 			//than the selection probability, select the individual
 			double randNum = ((double) rand())/(RAND_MAX);
-			
+
 			if (randNum < probability) {
 				int indexOfIndividual = rankList[j][0];
 				arrayCopy(breedingPool[i], population[indexOfIndividual], numVariables);
 				i++;
 			}
-			
+
 			if (i >= individuals) {
-=======
-	qsort(rankList, individuals, sizeof(int), cmprfnc);
-
-	int i = 0;
-	while (i < individuals) {
-		for (int j = 0; j < individuals; j++) {
-			int sum = (individuals * (individuals + 1))/2;
-			int probability = (j+1)/(sum);
-
-
-
-			if ((i + 1) == individuals) {
->>>>>>> Stashed changes
 				break;
 			}
 		}
 	}
-<<<<<<< Updated upstream
-=======
-
-	free(rankList);
->>>>>>> Stashed changes
 }
 
 void MaxSat::selectTournament() {
 	int randNum;
-<<<<<<< Updated upstream
-	
+
 	int* individual1 = (int*) malloc(sizeof(int) * numVariables);
 	int* individual2 = (int*) malloc(sizeof(int) * numVariables);
-=======
-
->>>>>>> Stashed changes
 	for (int i = 0; i < individuals; i++) {
 		randNum = rand() % individuals;
 		arrayCopy(individual1, population[randNum], numVariables);
@@ -362,37 +326,33 @@ void MaxSat::selectTournament() {
 }
 
 void MaxSat::selectBoltzman() {
-<<<<<<< Updated upstream
 	int i = 0;
-	
+
 	double totalFitness = 0;
 	for (int n = 0; n < individuals; n++) {
 		totalFitness += exp(fitnessList[n]);
 	}
-	
+
 	while (i < individuals) {
 		for (int j = 0; j < individuals; j++) {
 			//cout << "fitness of individual " << j << " is " << fitnessList[j] << endl;
 			double probability = exp(fitnessList[j])/totalFitness;
-			
+
 			//get a random num between 0 and 1. if that number is less
 			//than the selection probability, select the individual
 			double randNum = ((double) rand())/(RAND_MAX);
-			
+
 			if (randNum < probability) {
 				arrayCopy(breedingPool[i], population[j], numVariables);
 				i++;
 				/*cout << "selected individual with fitness " << fitnessList[j] << " and fitness prob " << probability << " above rand prob " << randNum << endl;*/
 			}
-			
+
 			if (i >= individuals) {
 				break;
 			}
 		}
 	}
-=======
-
->>>>>>> Stashed changes
 }
 
 void MaxSat::onePCross() {
@@ -462,14 +422,6 @@ void MaxSat::solveGA() {
 
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
-<<<<<<< Updated upstream
-		//printPopulation();
-    
-=======
-		cout << "population size " << individuals << endl;
-        printPopulation();
-
->>>>>>> Stashed changes
         if(!selection.compare("rs")) {
             selectRanking();
         } else if(!selection.compare("ts")) {
@@ -480,7 +432,7 @@ void MaxSat::solveGA() {
             cout << "error in selection: no valid selection method specified" << endl;
             exit(1);
         }
-		
+
 		/*cout << "Printing breeding pool (" << individuals << " individuals, " << numVariables << " size solution)..." << endl;
 		for(int i = 0; i < individuals; i++) {
 			printSolution(breedingPool[i]);
@@ -498,6 +450,6 @@ void MaxSat::solveGA() {
 
 		mutateOffspring();
 	}
-	
+
 	free(breedingPool);
 }

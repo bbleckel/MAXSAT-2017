@@ -250,7 +250,7 @@ void MaxSat::solvePBIL() {
 	// to free: fitnessList, population, PV
 }
 
-void MaxSat::selectRanking() {
+int** MaxSat::selectRanking() {
 	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
@@ -289,7 +289,7 @@ int** MaxSat::selectTournament() {
 	return breedingPool;
 }
 
-void MaxSat::selectBoltzman() {
+int** MaxSat::selectBoltzman() {
 	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);

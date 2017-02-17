@@ -66,6 +66,7 @@ private:
     int numVariables;
     int* fitnessList;
     int** population;
+	int** breedingPool;
 
 };
 

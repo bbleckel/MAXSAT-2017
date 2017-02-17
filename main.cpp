@@ -67,6 +67,7 @@ int main (int argc, char** argv) {
         inputFile.open(argv[1], ios::in);
         if(!inputFile.is_open()) {
             cerr << "ERROR: Could not open file" << endl;
+			exit(1);
         } else {
             while(getline(inputFile, line)) {
                 if(line.front() == 'c') {

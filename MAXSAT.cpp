@@ -251,22 +251,62 @@ void MaxSat::solvePBIL() {
 }
 
 void MaxSat::selectRanking() {
+	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
+	for(int i = 0; i < individuals; i++) {
+		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
+	}
 	
+	for (int i = 0; i < population; i++) {
+		
+	}
+	
+	return breedingPool;
 }
 
-void MaxSat::selectTournament() {
+int** MaxSat::selectTournament() {
+	int randNum;
 	
+	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
+	for(int i = 0; i < individuals; i++) {
+		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
+	}
+	
+	for (int i = 0; i < individuals; i++) {
+		randNum = rand() % population;
+		int* individual1 = population[randNum];
+		int fitness1 = fitnessList[randNum];
+		randNum = rand() % population;
+		int* individual2 = population[randNum];
+		int fitness2 = fitnessList[randNum];
+		
+		if (fitness1 > fitness2) {
+			breedingPool[i] = individual1;
+		} else {
+			breedingPool[i] = individual2;
+		}
+	}
+	
+	return breedingPool;
 }
 
 void MaxSat::selectBoltzman() {
-	
+	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
+	for(int i = 0; i < individuals; i++) {
+		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
+	}
+
+	return breedingPool;
 }
 
-void MaxSat::onePCross() {
+void MaxSat::onePCross(int** breedingPool) {
+	int randNum;
 	
+	for (int i = 0; i < individuals; i += 2) {
+		
+	}
 }
 
-void MaxSat::uniformCross() {
+void MaxSat::uniformCross(int** breedingPool) {
 	
 }
 
@@ -306,19 +346,17 @@ void MaxSat::solveGA() {
 	
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
-		
-		int maxFit = findMaxFitness();
-		int minFit = findMinFitness();
+		int** breedingPool;
 		
 		switch (selection) {
 			case "rs":
-				selectRanking();
+				breedingPool = selectRanking();
 				break;
 			case "ts":
-				selectTournament();
+				breedingPool = selectTournament();
 				break;
 			case "bs":
-				selectBoltzman();
+				breedingPool = selectBoltzman();
 				break;
 			default:
 				cout << "error in selection: no valid selection method specified" << endl;
@@ -327,10 +365,10 @@ void MaxSat::solveGA() {
 		
 		switch (crossover) {
 			case "1c":
-				onePCross();
+				onePCross(breedingPool);
 				break;
 			case "uc":
-				uniformCross();
+				uniformCross(breedingPool);
 				break;
 			default:
 				cout << "error in crossover: no valid crossover method specified" << endl;

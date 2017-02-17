@@ -250,26 +250,15 @@ void MaxSat::solvePBIL() {
 	// to free: fitnessList, population, PV
 }
 
-int** MaxSat::selectRanking() {
-	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
-	for(int i = 0; i < individuals; i++) {
-		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
-	}
-	
-	for (int i = 0; i < individuals; i++) {
+void MaxSat::selectRanking() {
+	int i = 0;
+	while (i < individuals) {
 		
 	}
-	
-	return breedingPool;
 }
 
-int** MaxSat::selectTournament() {
+void MaxSat::selectTournament() {
 	int randNum;
-	
-	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
-	for(int i = 0; i < individuals; i++) {
-		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
-	}
 	
 	for (int i = 0; i < individuals; i++) {
 		randNum = rand() % individuals;
@@ -285,20 +274,13 @@ int** MaxSat::selectTournament() {
 			breedingPool[i] = individual2;
 		}
 	}
+}
+
+void MaxSat::selectBoltzman() {
 	
-	return breedingPool;
 }
 
-int** MaxSat::selectBoltzman() {
-	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
-	for(int i = 0; i < individuals; i++) {
-		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
-	}
-
-	return breedingPool;
-}
-
-void MaxSat::onePCross(int** breedingPool) {
+void MaxSat::onePCross() {
 	int randNum;
 	
 	for (int i = 0; i < individuals; i += 2) {
@@ -306,7 +288,7 @@ void MaxSat::onePCross(int** breedingPool) {
 	}
 }
 
-void MaxSat::uniformCross(int** breedingPool) {
+void MaxSat::uniformCross() {
 	
 }
 
@@ -330,6 +312,11 @@ void MaxSat::solveGA() {
 	srand(time(NULL));
 	
 	initPopulation();
+	
+	breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
+	for(int i = 0; i < individuals; i++) {
+		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
+	}
 	
 	for (int i = 0; i < generations; i++) {
 		evalFitness();

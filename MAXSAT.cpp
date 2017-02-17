@@ -454,13 +454,7 @@ void MaxSat::solveGA() {
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
-<<<<<<< HEAD
 	
-=======
-
-	printPopulation();
-
->>>>>>> 1277160cf844cd21eadd28585f101eb014cf33c2
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
         if(!selection.compare("rs")) {

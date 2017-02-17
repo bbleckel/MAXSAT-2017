@@ -26,13 +26,13 @@ public:
     int findMinFitness();
 	
 	// selection
-	int** selectRanking();
-	int** selectTournament();
-	int** selectBoltzman();
+	void selectRanking();
+	void selectTournament();
+	void selectBoltzman();
 	
 	// crossover
-	void onePCross(int** breedingPool);
-	void uniformCross(int** breedingPool);
+	void onePCross();
+	void uniformCross();
     
     // mutation
     void mutatePV();

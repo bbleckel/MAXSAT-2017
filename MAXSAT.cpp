@@ -280,7 +280,7 @@ void MaxSat::selectBoltzman() {
 	
 }
 
-void MaxSat::onePCross(int** breedingPool) {
+void MaxSat::onePCross() {
 	int randNum;
 	
 	for (int i = 0; i < individuals; i += 2) {
@@ -288,7 +288,7 @@ void MaxSat::onePCross(int** breedingPool) {
 	}
 }
 
-void MaxSat::uniformCross(int** breedingPool) {
+void MaxSat::uniformCross() {
 	
 }
 
@@ -338,10 +338,10 @@ void MaxSat::solveGA() {
 		
 		switch (crossover) {
 			case "1c":
-				onePCross(breedingPool);
+				onePCross();
 				break;
 			case "uc":
-				uniformCross(breedingPool);
+				uniformCross();
 				break;
 			default:
 				cout << "error in crossover: no valid crossover method specified" << endl;

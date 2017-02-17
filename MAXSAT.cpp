@@ -262,4 +262,17 @@ void MaxSat::solveGA() {
 			population[i][j] = randNum;
 		}
 	}
+    
+    int genRemaining = generations;
+    while(genRemaining >= 0) {
+        /*
+         select(clauses, selectionMethod, individuals);
+         
+         mate();
+         
+         mutate();
+         */
+
+    }
+    
 }

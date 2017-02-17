@@ -28,6 +28,7 @@ public:
 	// selection
 	void selectRanking();
 	void selectTournament();
+	void arrayCopy(int* arr1, int* arr2, int size);
 	void selectBoltzman();
 	
 	// crossover

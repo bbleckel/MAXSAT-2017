@@ -257,8 +257,10 @@ int cmprfnc (const void * a, const void * b) {
 	return ( individual1[1] - individual2[1] );
 }
 
-void arrayCopy(int* individual, int* population) {
-	
+void MaxSat::arrayCopy(int* arr1, int* arr2, int size) {
+	for (int i = 0; i < size; i++) {
+		arr1[i] = arr2[i];
+	}
 }
 
 void MaxSat::selectRanking() {
@@ -288,6 +290,8 @@ void MaxSat::selectRanking() {
 			}
 		}
 	}
+	
+	free(rankList);
 }
 
 void MaxSat::selectTournament() {
@@ -295,36 +299,21 @@ void MaxSat::selectTournament() {
 	
 	for (int i = 0; i < individuals; i++) {
 		randNum = rand() % individuals;
-<<<<<<< HEAD
 		int* individual1 = (int*) malloc(sizeof(int) * numVariables);
-		arrayCopy(individual1, population[randNum]);
+		arrayCopy(individual1, population[randNum], numVariables);
 		int fitness1 = fitnessList[randNum];
 		
 		randNum = rand() % individuals;
 		int* individual2 = (int*) malloc(sizeof(int) * numVariables);
-		arrayCopy(individual2, population[randNum]);
-=======
-		int* individual1 = population[randNum];
-        cout << "Trying1 " << i << endl;
-
-		int fitness1 = fitnessList[randNum];
-        cout << "Trying2 " << i << endl;
-
-		randNum = rand() % individuals;
-		int* individual2 = population[randNum];
-        cout << "Trying3 " << i << endl;
-
->>>>>>> 64f79d83f4da35022d4ac9413106dbf5922114cb
+		arrayCopy(individual2, population[randNum], numVariables);
 		int fitness2 = fitnessList[randNum];
-        cout << "Trying4 " << i << endl;
-
 		
 		if (fitness1 > fitness2) {
             cout << "1" << endl;
-			breedingPool[i] = individual1;
+			arrayCopy(breedingPool[i], individual1, numVariables);
 		} else {
             cout << "2" << endl;
-			breedingPool[i] = individual2;
+			arrayCopy(breedingPool[i], individual2, numVariables);
 		}
         cout << "Done " << endl;
 	}
@@ -376,8 +365,14 @@ void MaxSat::solveGA() {
 	
 	initPopulation();
 	
+	breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
+	for(int i = 0; i < individuals; i++) {
+		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
+	}
+	
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
+		cout << "population size " << individuals << endl;
         printPopulation();
     
         if(!selection.compare("rs")) {
@@ -392,7 +387,7 @@ void MaxSat::solveGA() {
         }
         cout << "Fitness!" << endl;
 
-        if(!crossover.compare("uc")) {
+        if(!crossover.compare("1c")) {
             onePCross();
         } else if(!crossover.compare("uc")) {
             uniformCross();

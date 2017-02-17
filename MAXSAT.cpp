@@ -295,6 +295,7 @@ void MaxSat::selectTournament() {
 	
 	for (int i = 0; i < individuals; i++) {
 		randNum = rand() % individuals;
+<<<<<<< HEAD
 		int* individual1 = (int*) malloc(sizeof(int) * numVariables);
 		arrayCopy(individual1, population[randNum]);
 		int fitness1 = fitnessList[randNum];
@@ -302,13 +303,30 @@ void MaxSat::selectTournament() {
 		randNum = rand() % individuals;
 		int* individual2 = (int*) malloc(sizeof(int) * numVariables);
 		arrayCopy(individual2, population[randNum]);
+=======
+		int* individual1 = population[randNum];
+        cout << "Trying1 " << i << endl;
+
+		int fitness1 = fitnessList[randNum];
+        cout << "Trying2 " << i << endl;
+
+		randNum = rand() % individuals;
+		int* individual2 = population[randNum];
+        cout << "Trying3 " << i << endl;
+
+>>>>>>> 64f79d83f4da35022d4ac9413106dbf5922114cb
 		int fitness2 = fitnessList[randNum];
+        cout << "Trying4 " << i << endl;
+
 		
 		if (fitness1 > fitness2) {
+            cout << "1" << endl;
 			breedingPool[i] = individual1;
 		} else {
+            cout << "2" << endl;
 			breedingPool[i] = individual2;
 		}
+        cout << "Done " << endl;
 	}
 }
 
@@ -329,7 +347,16 @@ void MaxSat::uniformCross() {
 }
 
 void MaxSat::mutateOffspring() {
-	
+    int mutRand;
+    for(int i = 0; i < individuals; i++) {
+        for(int j = 0; j < numVariables; j++) {
+            mutRand = rand() % 100;
+            if((double) mutRand / 100 < pM) {
+                // make mutation: reverse the value of the "bit"
+                population[i][j] = !population[i][j];
+            }
+        }
+    }
 }
 
 void MaxSat::initPopulation() {
@@ -339,7 +366,7 @@ void MaxSat::initPopulation() {
 			randNum = rand() % 2;
 			population[i][j] = randNum;
 		}
-	}    
+	}
 }
 
 void MaxSat::solveGA() {
@@ -349,41 +376,33 @@ void MaxSat::solveGA() {
 	
 	initPopulation();
 	
-	breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
-	for(int i = 0; i < individuals; i++) {
-		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
-	}
-	
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
-		
-		switch (selection) {
-			case "rs":
-				selectRanking();
-				break;
-			case "ts":
-				selectTournament();
-				break;
-			case "bs":
-				selectBoltzman();
-				break;
-			default:
-				cout << "error in selection: no valid selection method specified" << endl;
-				exit();
-		}
-		
-		switch (crossover) {
-			case "1c":
-				onePCross();
-				break;
-			case "uc":
-				uniformCross();
-				break;
-			default:
-				cout << "error in crossover: no valid crossover method specified" << endl;
-				exit(1);
-		}
-		
+        printPopulation();
+    
+        if(!selection.compare("rs")) {
+            selectRanking();
+        } else if(!selection.compare("ts")) {
+            selectTournament();
+        } else if(!selection.compare("bs")) {
+            selectBoltzman();
+        } else {
+            cout << "error in selection: no valid selection method specified" << endl;
+            exit(1);
+        }
+        cout << "Fitness!" << endl;
+
+        if(!crossover.compare("uc")) {
+            onePCross();
+        } else if(!crossover.compare("uc")) {
+            uniformCross();
+        } else {
+            cout << "error in crossover: no valid crossover method specified" << endl;
+            exit(1);
+        }
+
 		mutateOffspring();
+        printPopulation();
+        return;
 	}
 }

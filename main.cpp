@@ -22,7 +22,6 @@ void printInfo() {
     cout << "                     bs   = Boltzmann selection" << endl;
     cout << "    crossover    = crossover method (string):" << endl;
     cout << "                     1c   = 1-point crossover" << endl;
-    cout << "                     2c   = 2-point crossover" << endl;
     cout << "                     uc   = uniform crossover" << endl;
     cout << "    pC           = crossover probability (double)" << endl;
     cout << "    pM           = mutation probability (double)" << endl;
@@ -138,10 +137,9 @@ int main (int argc, char** argv) {
             } else {
                 selection.assign(argv[3]);
             }
-            if(strcmp(argv[4], "1c") && strcmp(argv[4], "2c") && strcmp(argv[4], "uc")) {
+            if(strcmp(argv[4], "1c") && strcmp(argv[4], "uc")) {
                 cout << "Invalid fourth argument specifying crossover type. Please use:" << endl;
                 cout << "   1c   = 1-point crossover" << endl;
-                cout << "   2c   = 2-point crossover" << endl;
                 cout << "   uc   = uniform crossover" << endl;
                 exit(1);
             } else {

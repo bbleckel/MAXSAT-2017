@@ -250,13 +250,13 @@ void MaxSat::solvePBIL() {
 	// to free: fitnessList, population, PV
 }
 
-void MaxSat::selectRanking() {
+int** MaxSat::selectRanking() {
 	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
 	
-	for (int i = 0; i < population; i++) {
+	for (int i = 0; i < individuals; i++) {
 		
 	}
 	
@@ -272,10 +272,10 @@ int** MaxSat::selectTournament() {
 	}
 	
 	for (int i = 0; i < individuals; i++) {
-		randNum = rand() % population;
+		randNum = rand() % individuals;
 		int* individual1 = population[randNum];
 		int fitness1 = fitnessList[randNum];
-		randNum = rand() % population;
+		randNum = rand() % individuals;
 		int* individual2 = population[randNum];
 		int fitness2 = fitnessList[randNum];
 		
@@ -289,7 +289,7 @@ int** MaxSat::selectTournament() {
 	return breedingPool;
 }
 
-void MaxSat::selectBoltzman() {
+int** MaxSat::selectBoltzman() {
 	int** breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
@@ -359,7 +359,7 @@ void MaxSat::solveGA() {
 				break;
 			default:
 				cout << "error in crossover: no valid crossover method specified" << endl;
-				exit();
+				exit(1);
 		}
 		
 		mutateOffspring();

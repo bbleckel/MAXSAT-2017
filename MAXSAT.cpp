@@ -301,6 +301,8 @@ void MaxSat::selectRanking() {
 			}
 		}
 	}
+	
+	free(rankList);
 }
 
 void MaxSat::selectTournament() {
@@ -323,6 +325,8 @@ void MaxSat::selectTournament() {
 			arrayCopy(breedingPool[i], individual2, numVariables);
 		}
 	}
+	free(individual1);
+	free(individual2);
 }
 
 void MaxSat::selectBoltzman() {
@@ -419,7 +423,9 @@ void MaxSat::solveGA() {
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
-
+	
+	printPopulation();
+	
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
         if(!selection.compare("rs")) {
@@ -450,6 +456,8 @@ void MaxSat::solveGA() {
 
 		mutateOffspring();
 	}
+	int best = findMaxFitness();
+	printSolution(population[best]);
 
 	free(breedingPool);
 }

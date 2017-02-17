@@ -451,6 +451,7 @@ void MaxSat::solveGA() {
 	initPopulation();
 
 	breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
+	
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
@@ -485,6 +486,11 @@ void MaxSat::solveGA() {
 
 		mutateOffspring();
 		int bestFitness = findMaxFitness();
+		if (fitnessList[bestFitness] > bestValue) {
+			generationFoundBest = i + 1;
+			bestValue = fitnessList[bestFitness];
+			arrayCopy(best, population[bestFitness], numVariables);
+		}
 		if(i % (generations / 20) == 0) {
 			// print most clauses satisfied 20 times, i.e. every generations/20 times.
 			cout << "(Generation " << i << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
@@ -492,8 +498,8 @@ void MaxSat::solveGA() {
 	}
 	
 	cout << endl << endl;
-	cout << "Best solution satisfied " << countSatClauses(population[findMaxFitness()]) << " of " << clauses.size() << " clauses" << endl;
-	printSolution(population[findMaxFitness()]);
+	cout << "Best solution satisfied " << bestValue << " of " << clauses.size() << " clauses, found in generation " << generationFoundBest << endl;
+	printSolution(best);
 
 	free(breedingPool);
 }

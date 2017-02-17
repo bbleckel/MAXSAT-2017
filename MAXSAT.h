@@ -62,6 +62,9 @@ private:
 	string crossover;
     int generations;
     int numVariables;
+	int bestValue;
+	int generationFoundBest;
+	int* best;
     int* fitnessList;
     int** population;
 	int** breedingPool;

@@ -293,7 +293,16 @@ void MaxSat::uniformCross() {
 }
 
 void MaxSat::mutateOffspring() {
-	
+    int mutRand;
+    for(int i = 0; i < individuals; i++) {
+        for(int j = 0; j < numVariables; j++) {
+            mutRand = rand() % 100;
+            if((double) mutRand / 100 < pM) {
+                // make mutation: reverse the value of the "bit"
+                population[i][j] = !population[i][j];
+            }
+        }
+    }
 }
 
 void MaxSat::initPopulation() {
@@ -313,30 +322,28 @@ void MaxSat::solveGA() {
 	
 	initPopulation();
 	
-	breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
 	
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
-		int** breedingPool;
-        
+    
         if(!selection.compare("rs")) {
-            breedingPool = selectRanking();
+            selectRanking();
         } else if(!selection.compare("ts")) {
-            breedingPool = selectTournament();
+            selectTournament();
         } else if(!selection.compare("bs")) {
-            breedingPool = selectBoltzman();
+            selectBoltzman();
         } else {
             cout << "error in selection: no valid selection method specified" << endl;
             exit(1);
         }
 
         if(!crossover.compare("uc")) {
-            onePCross(breedingPool);
+            onePCross();
         } else if(!crossover.compare("uc")) {
-            uniformCross(breedingPool);
+            uniformCross();
         } else {
             cout << "error in crossover: no valid crossover method specified" << endl;
             exit(1);

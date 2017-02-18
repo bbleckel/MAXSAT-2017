@@ -196,6 +196,7 @@ void MaxSat::solvePBIL() {
 		for(int i = 0; i < individuals; i++) {
 			for(int j = 0; j < numVariables; j++) {
 				randNum = rand() % 100;
+				// divide by MAX_INT?
 				if((double) randNum / 100 < PV[j]) {
 					population[i][j] = 1;
 				} else {
@@ -362,11 +363,11 @@ void MaxSat::selectBoltzman() {
 void MaxSat::onePCross() {
 
 	for (int i = 0; i < individuals; i += 2) {
-		int randNum = rand();
+		double randNum = ((double) rand())/(RAND_MAX);
 		if (randNum < pC){
 			int* parent1 = breedingPool[i];
 			int* parent2 = breedingPool[i+1];
-			int crossPointRand = rand();
+			double crossPointRand = ((double) rand())/(RAND_MAX);
 			int crossPoint = (int) (crossPointRand * numVariables);
 			int* offspring1 = (int*) malloc(sizeof(int) * numVariables);
 			int* offspring2 = (int*) malloc(sizeof(int) * numVariables);
@@ -393,7 +394,7 @@ void MaxSat::onePCross() {
 
 void MaxSat::uniformCross() {
 	for (int i = 0; i < individuals; i++) {
-		int randNum = rand();
+		double randNum = ((double) rand())/(RAND_MAX);
 		if (randNum < pC) {
 			int* parent1 = breedingPool[i];
 			int* parent2;
@@ -402,10 +403,11 @@ void MaxSat::uniformCross() {
 			} else {
 				parent2 = breedingPool[i+1];
 			}
+			// should only malloc & free once if necessary
 			int* offspring = (int*) malloc(sizeof(int) * numVariables);
 
 			for (int j = 0; j < numVariables; j++) {
-				int pointProb = rand();
+				double pointProb = ((double) rand())/(RAND_MAX);
 				if (pointProb < 0.5) {
 					offspring[j] = parent1[j];
 				} else {
@@ -485,6 +487,7 @@ void MaxSat::solveGA() {
         }
 
 		mutateOffspring();
+		
 		int bestFitness = findMaxFitness();
 		if (fitnessList[bestFitness] > bestValue) {
 			generationFoundBest = i + 1;

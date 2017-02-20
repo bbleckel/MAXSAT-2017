@@ -282,6 +282,22 @@ void MaxSat::selectRanking() {
 	qsort(rankList, individuals, sizeof rankList[0], compare);
 
 	double sum = (individuals * (individuals + 1))/2;
+	
+	
+	for (int i = 0; i < individuals; i++) {
+		double probability = 0;
+		double randomProbability = ((double) rand())/(RAND_MAX);
+		for (int j = 0; j < individuals; j++) {
+			probability += (j+1)/(sum);
+			
+			if (probability >= randomProbability) {
+				arrayCopy(breedingPool[i], population[rankList[j][0]], numVariables);
+			}
+		}
+	}
+	
+		
+	/*
 	int i = 0;
 	while (i < individuals) {
 		for (int j = 0; j < individuals; j++) {
@@ -302,6 +318,7 @@ void MaxSat::selectRanking() {
 			}
 		}
 	}
+	*/
 
 	free(rankList);
 }
@@ -337,10 +354,22 @@ void MaxSat::selectBoltzman() {
 	for (int n = 0; n < individuals; n++) {
 		totalFitness += exp(fitnessList[n]);
 	}
+	
+	for (int i = 0; i < individuals; i++) {
+		double probability = 0;
+		double randomProbability = ((double) rand())/(INT_MAX);
+		for (int j = 0; j < individuals; j++) {
+			probability += exp(fitnessList[j])/totalFitness;
+			
+			if (probability >= randomProbability) {
+				arrayCopy(breedingPool[i], population[j], numVariables);
+			}
+		}
+	}
 
+	/*
 	while (i < individuals) {
 		for (int j = 0; j < individuals; j++) {
-			//cout << "fitness of individual " << j << " is " << fitnessList[j] << endl;
 			double probability = exp(fitnessList[j])/totalFitness;
 
 			//get a random num between 0 and 1. if that number is less
@@ -350,7 +379,6 @@ void MaxSat::selectBoltzman() {
 			if (randNum < probability) {
 				arrayCopy(breedingPool[i], population[j], numVariables);
 				i++;
-				/*cout << "selected individual with fitness " << fitnessList[j] << " and fitness prob " << probability << " above rand prob " << randNum << endl;*/
 			}
 
 			if (i >= individuals) {
@@ -358,6 +386,7 @@ void MaxSat::selectBoltzman() {
 			}
 		}
 	}
+	*/
 }
 // NOTE: THIS WILL ONLY WORK FOR EVEN POPULATION I THINK
 void MaxSat::onePCross() {

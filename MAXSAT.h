@@ -9,6 +9,8 @@
 #include <ctime>
 #include <climits>
 #include <cmath>
+#include <fstream>
+
 
 using namespace std;
 
@@ -19,6 +21,10 @@ public:
     MaxSat(vector< vector<int> > clauses, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int numVariables);
 	MaxSat(vector< vector<int> > clauses, int individuals, string selection, string crossover, double pC, double pM, int generations, int numVariables);
     ~MaxSat();
+    
+    void readFile(char* fileName);
+
+    
     void initPV();
 	void initPopulation();
 
@@ -65,6 +71,7 @@ private:
 	string crossover;
     int generations;
     int numVariables;
+    int numClauses;
 	int bestValue;
 	int generationFoundBest;
 	int* best;

@@ -52,6 +52,58 @@ MaxSat::~MaxSat() {
 	cout << "Freeing MaxSat variables. Goodbye!" << endl;
 }
 
+void MaxSat::readFile(char* fileName) {
+    // read in file
+    string line;
+    ifstream inputFile;
+    inputFile.open(fileName, ios::in);
+    if(!inputFile.is_open()) {
+        cerr << "ERROR: Could not open file" << endl;
+        exit(1);
+    } else {
+        while(getline(inputFile, line)) {
+            if(line.front() == 'c') {
+                // line is a comment, should not be included in algorithm
+                cout << line << endl;
+                
+            } else if (line.front() == 'p') {
+                // the line just before the data begins
+                // contains information about the data if we want it
+                cout << line << endl;
+                
+                string entry;
+                string delimiter = " ";
+                // get rid of "p" and "cnf"
+                entry = line.substr(0, line.find(delimiter));
+                line.erase(0, line.find(delimiter) + delimiter.length());
+                entry = line.substr(0, line.find(delimiter));
+                line.erase(0, line.find(delimiter) + delimiter.length());
+                
+                // save number of variables & clauses
+                numVariables = stoi(line.substr(0, line.find(delimiter)));
+                line.erase(0, line.find(delimiter) + delimiter.length());
+                
+                numClauses = stoi(line.substr(0, line.find(delimiter)));
+                line.erase(0, line.find(delimiter) + delimiter.length());
+                
+                cout << numVariables << " variables and " << numClauses << " clauses!" << endl;
+                
+            } else if (line.back() == '0'){
+                // line should be included in data we are using
+                string entry;
+                string delimiter = " ";
+                vector<int> clause;
+                while((entry = line.substr(0, line.find(delimiter))) != "0") {
+                    clause.push_back(stoi(entry));
+                    line.erase(0, line.find(delimiter) + delimiter.length());
+                }
+                clauses.push_back(clause);
+            }
+        }
+        inputFile.close();
+    }
+}
+
 void MaxSat::initPV() {
 	PV.clear();
 	// initialize PV
@@ -231,10 +283,10 @@ void MaxSat::solvePBIL() {
         }
 		
 		genRemaining--;
-		if(genRemaining % (generations / 20) == 0) {
-			// print most clauses satisfied each 10 generations
-			cout << "(Generation " << generations - genRemaining << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
-		}
+//		if(genRemaining % (generations / 20) == 0) {
+//			// print most clauses satisfied each 10 generations
+//			cout << "(Generation " << generations - genRemaining << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
+//		}
 	}
 	
 	// for test purposes, show archetype solution

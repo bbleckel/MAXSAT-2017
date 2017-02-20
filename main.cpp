@@ -1,10 +1,13 @@
-#include <cstdlib>
-#include <iostream>
-#include <ctime>
+// these were the includes before; since MAXSAT.h is included and has all these, shouldn't need them
+//#include <cstdlib>
+//#include <iostream>
+//#include <ctime>
+//#include <unistd.h>
+//#include <string.h>
+//#include <fstream>
+//#include "MAXSAT.h"
+
 #include <unistd.h>
-// #include <string>
-#include <string.h>
-#include <fstream>
 #include "MAXSAT.h"
 
 using namespace std;
@@ -40,6 +43,7 @@ void printInfo() {
 }
 
 void testCases(MaxSat solver) {
+    string fileName;
     
     // vary file name
     for(int i = 0; i < 10; i++) {
@@ -59,12 +63,12 @@ int main (int argc, char** argv) {
     double posRate;
     double negRate;
     double mutAmnt;
-
+    
     // holds all clauses
     vector< vector<int> > clauses;
     int numVariables;
     int numClauses;
-
+    
     if(argc != 9) {
         printInfo();
         exit(1);
@@ -75,18 +79,18 @@ int main (int argc, char** argv) {
         inputFile.open(argv[1], ios::in);
         if(!inputFile.is_open()) {
             cerr << "ERROR: Could not open file" << endl;
-			exit(1);
+            exit(1);
         } else {
             while(getline(inputFile, line)) {
                 if(line.front() == 'c') {
                     // line is a comment, should not be included in algorithm
                     cout << line << endl;
-
+                    
                 } else if (line.front() == 'p') {
                     // the line just before the data begins
                     // contains information about the data if we want it
                     cout << line << endl;
-
+                    
                     string entry;
                     string delimiter = " ";
                     // get rid of "p" and "cnf"
@@ -94,16 +98,16 @@ int main (int argc, char** argv) {
                     line.erase(0, line.find(delimiter) + delimiter.length());
                     entry = line.substr(0, line.find(delimiter));
                     line.erase(0, line.find(delimiter) + delimiter.length());
-
+                    
                     // save number of variables & clauses
                     numVariables = stoi(line.substr(0, line.find(delimiter)));
                     line.erase(0, line.find(delimiter) + delimiter.length());
-
+                    
                     numClauses = stoi(line.substr(0, line.find(delimiter)));
                     line.erase(0, line.find(delimiter) + delimiter.length());
-
+                    
                     cout << numVariables << " variables and " << numClauses << " clauses!" << endl;
-
+                    
                 } else if (line.back() == '0'){
                     // line should be included in data we are using
                     string entry;
@@ -118,10 +122,10 @@ int main (int argc, char** argv) {
             }
             inputFile.close();
         }
-
+        
         // type of algorithm determines how other arguments are interpreted
-
-
+        
+        
         if(!strcmp(argv[8], "g")) {
             cout << "doing genetic" << endl;
             algType = 0;
@@ -131,7 +135,7 @@ int main (int argc, char** argv) {
             cout << "Invalid eighth argument specifying algorithm type. Please use:" << endl;
             cout << "    algorithm    = type of algorithm (g or p) (string)" << endl;
         }
-
+        
         // introduces some possible errors, like entering "ts" for selection but "p" for algorithm; that error won't be caught
         if(!algType) {
             // assign relevant GA variables
@@ -156,7 +160,7 @@ int main (int argc, char** argv) {
             }
             pC = atof(argv[5]);
             pM = atof(argv[6]);
-
+            
         } else {
             // assign relevant PBIL variables
             posRate = atof(argv[3]);
@@ -164,12 +168,12 @@ int main (int argc, char** argv) {
             pM = atof(argv[5]);
             mutAmnt = atof(argv[6]);
         }
-
+        
         individuals = atoi(argv[2]);
         generations = atoi(argv[7]);
     }
-
-
+    
+    
     // print correct input
     cout << "Your input values:" << endl;
     if(!algType) {
@@ -190,14 +194,14 @@ int main (int argc, char** argv) {
         cout << "    MAX_GEN         =  " << generations << endl;
         cout << "    ALG_TYPE        =  PBIL" << endl;
     }
-
+    
     if(!algType) {
         // call GA
-		MaxSat solver(clauses, individuals, selection, crossover, pC, pM, generations, numVariables);
-		solver.solveGA();
+        MaxSat solver(clauses, individuals, selection, crossover, pC, pM, generations, numVariables);
+        solver.solveGA();
     } else {
         // call PBIL
-
+        
         MaxSat solver(clauses, individuals, posRate, negRate, pM, mutAmnt, generations, numVariables);
         solver.solvePBIL();
     }

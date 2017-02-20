@@ -39,6 +39,14 @@ void printInfo() {
     cout << endl;
 }
 
+void testCases(MaxSat solver) {
+    
+    // vary file name
+    for(int i = 0; i < 10; i++) {
+        
+    }
+}
+
 
 int main (int argc, char** argv) {
     int individuals;

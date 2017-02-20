@@ -1,6 +1,4 @@
 #include "MAXSAT.h"
-#include "math.h"
-#include "climits"
 
 using namespace std;
 
@@ -189,7 +187,9 @@ void MaxSat::solvePBIL() {
 	// initialize PV
 	initPV();
 	
-	int randNum;
+    double randNum;
+    // keeps track of the most clauses satisfied over the whole process
+    int maxSatisfied = 0;
 	
 	int genRemaining = generations;
 	
@@ -197,9 +197,9 @@ void MaxSat::solvePBIL() {
 		// create population
 		for(int i = 0; i < individuals; i++) {
 			for(int j = 0; j < numVariables; j++) {
-				randNum = rand() % 100;
+				randNum = ((double) rand())/(INT_MAX);
 				// divide by MAX_INT?
-				if((double) randNum / 100 < PV[j]) {
+				if(randNum < PV[j]) {
 					population[i][j] = 1;
 				} else {
 					population[i][j] = 0;
@@ -225,6 +225,10 @@ void MaxSat::solvePBIL() {
 		
 		// mutate!
 		mutatePV();
+        
+        if(fitnessList[bestFitness] > maxSatisfied) {
+            maxSatisfied = fitnessList[bestFitness];
+        }
 		
 		genRemaining--;
 		if(genRemaining % (generations / 20) == 0) {
@@ -243,15 +247,16 @@ void MaxSat::solvePBIL() {
 		}
 	}
 	
+    double percentSatisfied = (double) maxSatisfied / clauses.size();
+    cout << "Satisfied = " << setprecision(2) << percentSatisfied * 100 << "% (" << maxSatisfied << "/" << clauses.size() << " satisfied)" << endl;
 	
-	
-	cout << "Best solution satisfied " << countSatClauses(population[findMaxFitness()]) << " of " << clauses.size() << " clauses" << endl;
-	cout << "Archetypical solution satisfied " << countSatClauses(sol) << " of " << clauses.size() << " clauses:" << endl;
-	printSolution(sol);
+//	cout << "Best solution satisfied " << countSatClauses(population[findMaxFitness()]) << " of " << clauses.size() << " clauses" << endl;
+//	cout << "Archetypical solution satisfied " << countSatClauses(sol) << " of " << clauses.size() << " clauses:" << endl;
+//	printSolution(sol);
 	
 	
 	//    printPopulation(population, individuals, numVariables);
-	printPV();
+//	printPV();
 	
 	// to free: fitnessList, population, PV
 }

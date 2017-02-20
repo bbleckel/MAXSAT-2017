@@ -42,13 +42,58 @@ void printInfo() {
     cout << endl;
 }
 
-void testCases(MaxSat solver) {
-    string fileName;
+void testCases() {
+//    int popSizes[5] = {5, 10, 100, 500, 1000};
+//    int genSizes[5] = {100, 500, 1000, 2000, 10000};
+//    double posRate[3] = {0.01, 0.1, 0.75};
+//    double negRate[3] = {0.01, 0.1, 0.75};
+//    double pMList[5] = {0.001, 0.01, 0.1, 0.5, 1.0};
+//    double amntList[5] = {0.005, 0.05, 0.25, 0.5, 1.0};
+//    
+//    string fileName[11] = {"../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-8.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-39.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/brock200_4.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf", "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf", "../maxsat-problems/maxsat-random/max2sat/120v/s2v120c1200-10.cnf", "../maxsat-problems/maxsat-random/max2sat/140v/s2v140c1600-6.cnf", "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf", "../maxsat-problems/maxsat-random/max3sat/80v/s3v80c1000-2.cnf"};
     
+    int popSizes[3] = {10, 100, 1000};
+    int genSizes[3] = {100, 2000, 10000};
+    double posRate[3] = {0.01, 0.1, 0.75};
+    double negRate[3] = {0.01, 0.1, 0.75};
+    double pMList[3] = {0.01, 0.1, 1.0};
+    double amntList[3] = {0.05, 0.5, 1.0};
+    
+    string fileName[5] = {"../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf", "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf", "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf"};
+    
+    
+    // PBIL tests
+    int count = 0;
     // vary file name
-    for(int i = 0; i < 10; i++) {
-        
+    for(int f = 0; f < 5; f++) {
+        cout << "Solving for " << fileName[f] << endl;
+        // vary population size
+        for(int i = 0; i < 3; i++) {
+            // vary mutation probability
+            for(int p = 0; p < 3; p++) {
+                // vary mutation amount
+                for(int m = 0; m < 3; m++) {
+                    // vary positive learning rate
+                    for(int l = 0; l < 3; l++) {
+                        // vary negative learning rate
+                        for(int n = 0; n < 3; n++) {
+                            // vary number of generations
+                            for(int g = 0; g < 3; g++) {
+                                MaxSat solver(fileName[f], popSizes[i], posRate[l], negRate[p], pMList[p], amntList[m], genSizes[g]);
+                                solver.solvePBIL();
+                                cout << fileName[f] << popSizes[i] << posRate[l] << negRate[p] << pMList[p] << amntList[m] << genSizes[g] << endl;
+                                count++;
+
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
     }
+    cout << count << endl;
+    // GA tests
 }
 
 
@@ -73,59 +118,7 @@ int main (int argc, char** argv) {
         printInfo();
         exit(1);
     } else {
-        // read in file
-        string line;
-        ifstream inputFile;
-        inputFile.open(argv[1], ios::in);
-        if(!inputFile.is_open()) {
-            cerr << "ERROR: Could not open file" << endl;
-            exit(1);
-        } else {
-            while(getline(inputFile, line)) {
-                if(line.front() == 'c') {
-                    // line is a comment, should not be included in algorithm
-                    cout << line << endl;
-                    
-                } else if (line.front() == 'p') {
-                    // the line just before the data begins
-                    // contains information about the data if we want it
-                    cout << line << endl;
-                    
-                    string entry;
-                    string delimiter = " ";
-                    // get rid of "p" and "cnf"
-                    entry = line.substr(0, line.find(delimiter));
-                    line.erase(0, line.find(delimiter) + delimiter.length());
-                    entry = line.substr(0, line.find(delimiter));
-                    line.erase(0, line.find(delimiter) + delimiter.length());
-                    
-                    // save number of variables & clauses
-                    numVariables = stoi(line.substr(0, line.find(delimiter)));
-                    line.erase(0, line.find(delimiter) + delimiter.length());
-                    
-                    numClauses = stoi(line.substr(0, line.find(delimiter)));
-                    line.erase(0, line.find(delimiter) + delimiter.length());
-                    
-                    cout << numVariables << " variables and " << numClauses << " clauses!" << endl;
-                    
-                } else if (line.back() == '0'){
-                    // line should be included in data we are using
-                    string entry;
-                    string delimiter = " ";
-                    vector<int> clause;
-                    while((entry = line.substr(0, line.find(delimiter))) != "0") {
-                        clause.push_back(stoi(entry));
-                        line.erase(0, line.find(delimiter) + delimiter.length());
-                    }
-                    clauses.push_back(clause);
-                }
-            }
-            inputFile.close();
-        }
-        
         // type of algorithm determines how other arguments are interpreted
-        
-        
         if(!strcmp(argv[8], "g")) {
             cout << "doing genetic" << endl;
             algType = 0;
@@ -195,14 +188,15 @@ int main (int argc, char** argv) {
         cout << "    ALG_TYPE        =  PBIL" << endl;
     }
     
-    if(!algType) {
-        // call GA
-        MaxSat solver(clauses, individuals, selection, crossover, pC, pM, generations, numVariables);
-        solver.solveGA();
-    } else {
-        // call PBIL
-        
-        MaxSat solver(clauses, individuals, posRate, negRate, pM, mutAmnt, generations, numVariables);
-        solver.solvePBIL();
-    }
+    testCases();
+    
+//    if(!algType) {
+//        // call GA
+//        MaxSat solver(argv[1], individuals, selection, crossover, pC, pM, generations);
+//        solver.solveGA();
+//    } else {
+//        // call PBIL
+//        MaxSat solver(argv[1], individuals, posRate, negRate, pM, mutAmnt, generations);
+//        solver.solvePBIL();
+//    }
 } // end main

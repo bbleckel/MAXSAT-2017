@@ -18,11 +18,11 @@ class MaxSat {
 
 public:
     // constructor/destructor
-    MaxSat(vector< vector<int> > clauses, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int numVariables);
-	MaxSat(vector< vector<int> > clauses, int individuals, string selection, string crossover, double pC, double pM, int generations, int numVariables);
+    MaxSat(string fileName, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations);
+	MaxSat(string fileName, int individuals, string selection, string crossover, double pC, double pM, int generations);
     ~MaxSat();
     
-    void readFile(char* fileName);
+    void readFile(string fileName);
 
     
     void initPV();

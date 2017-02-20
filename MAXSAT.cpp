@@ -2,15 +2,16 @@
 
 using namespace std;
 
-MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations, int numVariables) {
-	this->clauses = clauses;
-	this->individuals = individuals;
+MaxSat::MaxSat(string fileName, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations) {
+    
+    readFile(fileName);
+    
+    this->individuals = individuals;
 	this->posRate = posRate;
 	this->negRate = negRate;
 	this->pM = pM;
 	this->mutAmnt = mutAmnt;
 	this->generations = generations;
-	this->numVariables = numVariables;
 	
 	// allocate array memory
 	fitnessList = (int*) malloc(sizeof(int) * individuals);
@@ -18,19 +19,20 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, double posRate, d
 	for(int i = 0; i < individuals; i++) {
 		population[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
-	cout << "Created class for PBIL" << endl;
+//	cout << "Created class for PBIL" << endl;
 	
 }
 
-MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, string selection, string crossover, double pC, double pM, int generations, int numVariables) {
-	this->clauses = clauses;
+MaxSat::MaxSat(string fileName, int individuals, string selection, string crossover, double pC, double pM, int generations) {
+    
+    readFile(fileName);
+    
 	this->individuals = individuals;
 	this->selection = selection;
 	this->crossover = crossover;
 	this->pC = pC;
 	this->pM = pM;
 	this->generations = generations;
-	this->numVariables = numVariables;
 	this->bestValue = 0;
 	
 	fitnessList = (int*) malloc(sizeof(int) * individuals);
@@ -38,7 +40,7 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, string selection,
 	for(int i = 0; i < individuals; i++) {
 		population[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
-	cout << "Created class for GA" << endl;
+//	cout << "Created class for GA" << endl;
 	
 }
 
@@ -49,10 +51,9 @@ MaxSat::~MaxSat() {
 		free(population[i]);
 	free(population);
 	// delete vectors?
-	cout << "Freeing MaxSat variables. Goodbye!" << endl;
 }
 
-void MaxSat::readFile(char* fileName) {
+void MaxSat::readFile(string fileName) {
     // read in file
     string line;
     ifstream inputFile;
@@ -64,12 +65,12 @@ void MaxSat::readFile(char* fileName) {
         while(getline(inputFile, line)) {
             if(line.front() == 'c') {
                 // line is a comment, should not be included in algorithm
-                cout << line << endl;
+//                cout << line << endl;
                 
             } else if (line.front() == 'p') {
                 // the line just before the data begins
                 // contains information about the data if we want it
-                cout << line << endl;
+//                cout << line << endl;
                 
                 string entry;
                 string delimiter = " ";
@@ -82,11 +83,9 @@ void MaxSat::readFile(char* fileName) {
                 // save number of variables & clauses
                 numVariables = stoi(line.substr(0, line.find(delimiter)));
                 line.erase(0, line.find(delimiter) + delimiter.length());
-                
                 numClauses = stoi(line.substr(0, line.find(delimiter)));
                 line.erase(0, line.find(delimiter) + delimiter.length());
-                
-                cout << numVariables << " variables and " << numClauses << " clauses!" << endl;
+//                cout << numVariables << " variables and " << numClauses << " clauses!" << endl;
                 
             } else if (line.back() == '0'){
                 // line should be included in data we are using
@@ -238,7 +237,7 @@ void MaxSat::solvePBIL() {
 	
 	// initialize PV
 	initPV();
-	
+    
     double randNum;
     // keeps track of the most clauses satisfied over the whole process
     int maxSatisfied = 0;
@@ -258,7 +257,7 @@ void MaxSat::solvePBIL() {
 				}
 			}
 		}
-		
+
 		evalFitness();
 		int bestFitness = findMaxFitness();
 		int worstFitness = findMinFitness();

@@ -13,7 +13,7 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, double posRate, d
 	this->mutAmnt = mutAmnt;
 	this->generations = generations;
 	this->numVariables = numVariables;
-
+	
 	// allocate array memory
 	fitnessList = (int*) malloc(sizeof(int) * individuals);
 	population = (int**) malloc(sizeof(int) * individuals * numVariables);
@@ -21,7 +21,7 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, double posRate, d
 		population[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
 	cout << "Created class for PBIL" << endl;
-
+	
 }
 
 MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, string selection, string crossover, double pC, double pM, int generations, int numVariables) {
@@ -34,14 +34,14 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, string selection,
 	this->generations = generations;
 	this->numVariables = numVariables;
 	this->bestValue = 0;
-
+	
 	fitnessList = (int*) malloc(sizeof(int) * individuals);
 	population = (int**) malloc(sizeof(int) * individuals * numVariables);
 	for(int i = 0; i < individuals; i++) {
 		population[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
 	cout << "Created class for GA" << endl;
-
+	
 }
 
 MaxSat::~MaxSat() {
@@ -65,7 +65,7 @@ void MaxSat::initPV() {
 int MaxSat::countSatClauses(int* solution) {
 	int count = 0;
 	// each solution requires O(numClauses * numVariables) to count satisfied clauses
-
+	
 	//iterate through clauses
 	for(int i = 0; i < clauses.size(); i++) {
 		// iterate through variables of each clase
@@ -75,7 +75,7 @@ int MaxSat::countSatClauses(int* solution) {
 			int value;
 			if(clauses[i][j] < 0) {
 				value = -1 * clauses[i][j];
-
+				
 				// note: should never be a variable 0, as 0's are reserved for end of line
 				if(!solution[value - 1]) {
 					count++;
@@ -83,7 +83,7 @@ int MaxSat::countSatClauses(int* solution) {
 				}
 			} else {
 				value = clauses[i][j];
-
+				
 				if(solution[value - 1]) {
 					count++;
 					break;
@@ -91,7 +91,7 @@ int MaxSat::countSatClauses(int* solution) {
 			}
 		}
 	}
-
+	
 	return count;
 }
 
@@ -183,16 +183,16 @@ void MaxSat::printClauses() {
 
 void MaxSat::solvePBIL() {
 	cout << "Solving with PBIL..." << endl;
-
+	
 	srand(time(NULL));
-
+	
 	// initialize PV
 	initPV();
-
+	
 	int randNum;
-
+	
 	int genRemaining = generations;
-
+	
 	while(genRemaining >= 0) {
 		// create population
 		for(int i = 0; i < individuals; i++) {
@@ -206,11 +206,11 @@ void MaxSat::solvePBIL() {
 				}
 			}
 		}
-
+		
 		evalFitness();
 		int bestFitness = findMaxFitness();
 		int worstFitness = findMinFitness();
-
+		
 		// update PV towards best solution
 		for(int i = 0; i < PV.size(); i++) {
 			PV[i] = PV[i] * (1.0 - posRate) + population[bestFitness][i] * posRate;
@@ -222,17 +222,17 @@ void MaxSat::solvePBIL() {
 				PV[i] = PV[i] * (1.0 - negRate) + population[bestFitness][i] * negRate;
 			}
 		}
-
+		
 		// mutate!
 		mutatePV();
-
+		
 		genRemaining--;
 		if(genRemaining % (generations / 20) == 0) {
 			// print most clauses satisfied each 10 generations
 			cout << "(Generation " << generations - genRemaining << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
 		}
 	}
-
+	
 	// for test purposes, show archetype solution
 	int* sol = (int*) malloc(sizeof(int) * numVariables);
 	for(int i = 0; i < numVariables; i++) {
@@ -242,24 +242,24 @@ void MaxSat::solvePBIL() {
 			sol[i] = 0;
 		}
 	}
-
-
-
+	
+	
+	
 	cout << "Best solution satisfied " << countSatClauses(population[findMaxFitness()]) << " of " << clauses.size() << " clauses" << endl;
 	cout << "Archetypical solution satisfied " << countSatClauses(sol) << " of " << clauses.size() << " clauses:" << endl;
 	printSolution(sol);
-
-
+	
+	
 	//    printPopulation(population, individuals, numVariables);
 	printPV();
-
+	
 	// to free: fitnessList, population, PV
 }
 
 int compare ( const void *pa, const void *pb ) {
 	const int *a = *(const int **)pa;
 	const int *b = *(const int **)pb;
-
+	
 	return a[1] - b[1];
 }
 
@@ -275,14 +275,14 @@ void MaxSat::selectRanking() {
 	int** rankList = (int**) malloc(sizeof(int) * individuals  * 2);
 	for (int i = 0; i < individuals; i++) {
 		rankList[i] = (int*) malloc(sizeof(int) * 2);
-
+		
 		rankList[i][0] = i;
 		rankList[i][1] = fitnessList[i];
 	}
-
+	
 	//quicksort to sort the individuals by fitness
 	qsort(rankList, individuals, sizeof rankList[0], compare);
-
+	
 	double sum = (individuals * (individuals + 1))/2;
 	
 	
@@ -298,47 +298,47 @@ void MaxSat::selectRanking() {
 		}
 	}
 	
-		
+	
 	/*
-	int i = 0;
-	while (i < individuals) {
+	 int i = 0;
+	 while (i < individuals) {
 		for (int j = 0; j < individuals; j++) {
-			double probability = (j+1)/(sum);
-
-			//get a random num between 0 and 1. if that number is less
-			//than the selection probability, select the individual
-			double randNum = ((double) rand())/(RAND_MAX);
-
-			if (randNum < probability) {
-				int indexOfIndividual = rankList[j][0];
-				arrayCopy(breedingPool[i], population[indexOfIndividual], numVariables);
-				i++;
-			}
-
-			if (i >= individuals) {
-				break;
-			}
+	 double probability = (j+1)/(sum);
+	 
+	 //get a random num between 0 and 1. if that number is less
+	 //than the selection probability, select the individual
+	 double randNum = ((double) rand())/(RAND_MAX);
+	 
+	 if (randNum < probability) {
+	 int indexOfIndividual = rankList[j][0];
+	 arrayCopy(breedingPool[i], population[indexOfIndividual], numVariables);
+	 i++;
+	 }
+	 
+	 if (i >= individuals) {
+	 break;
+	 }
 		}
-	}
-	*/
-
+	 }
+	 */
+	
 	free(rankList);
 }
 
 void MaxSat::selectTournament() {
 	int randNum;
-
+	
 	int* individual1 = (int*) malloc(sizeof(int) * numVariables);
 	int* individual2 = (int*) malloc(sizeof(int) * numVariables);
 	for (int i = 0; i < individuals; i++) {
 		randNum = rand() % individuals;
 		arrayCopy(individual1, population[randNum], numVariables);
 		int fitness1 = fitnessList[randNum];
-
+		
 		randNum = rand() % individuals;
 		arrayCopy(individual2, population[randNum], numVariables);
 		int fitness2 = fitnessList[randNum];
-
+		
 		if (fitness1 > fitness2) {
 			arrayCopy(breedingPool[i], individual1, numVariables);
 		} else {
@@ -351,7 +351,7 @@ void MaxSat::selectTournament() {
 
 void MaxSat::selectBoltzman() {
 	int i = 0;
-
+	
 	double totalFitness = 0;
 	for (int n = 0; n < individuals; n++) {
 		totalFitness += exp(fitnessList[n]);
@@ -368,31 +368,31 @@ void MaxSat::selectBoltzman() {
 			}
 		}
 	}
-
+	
 	/*
-	while (i < individuals) {
+	 while (i < individuals) {
 		for (int j = 0; j < individuals; j++) {
-			double probability = exp(fitnessList[j])/totalFitness;
-
-			//get a random num between 0 and 1. if that number is less
-			//than the selection probability, select the individual
-			double randNum = ((double) rand())/(RAND_MAX);
-
-			if (randNum < probability) {
-				arrayCopy(breedingPool[i], population[j], numVariables);
-				i++;
-			}
-
-			if (i >= individuals) {
-				break;
-			}
+	 double probability = exp(fitnessList[j])/totalFitness;
+	 
+	 //get a random num between 0 and 1. if that number is less
+	 //than the selection probability, select the individual
+	 double randNum = ((double) rand())/(RAND_MAX);
+	 
+	 if (randNum < probability) {
+	 arrayCopy(breedingPool[i], population[j], numVariables);
+	 i++;
+	 }
+	 
+	 if (i >= individuals) {
+	 break;
+	 }
 		}
-	}
-	*/
+	 }
+	 */
 }
 // NOTE: THIS WILL ONLY WORK FOR EVEN POPULATION I THINK
 void MaxSat::onePCross() {
-
+	
 	for (int i = 0; i < individuals; i += 2) {
 		double randNum = ((double) rand())/(RAND_MAX);
 		if (randNum < pC){
@@ -402,7 +402,7 @@ void MaxSat::onePCross() {
 			int crossPoint = (int) (crossPointRand * numVariables);
 			int* offspring1 = (int*) malloc(sizeof(int) * numVariables);
 			int* offspring2 = (int*) malloc(sizeof(int) * numVariables);
-
+			
 			for (int j = 0; j < numVariables; j++) {
 				if (j < crossPoint) {
 					offspring1[j] = parent1[j];
@@ -436,7 +436,7 @@ void MaxSat::uniformCross() {
 			}
 			// should only malloc & free once if necessary
 			int* offspring = (int*) malloc(sizeof(int) * numVariables);
-
+			
 			for (int j = 0; j < numVariables; j++) {
 				double pointProb = ((double) rand())/(RAND_MAX);
 				if (pointProb < 0.5) {
@@ -454,16 +454,16 @@ void MaxSat::uniformCross() {
 }
 
 void MaxSat::mutateOffspring() {
-    int mutRand;
-    for(int i = 0; i < individuals; i++) {
-        for(int j = 0; j < numVariables; j++) {
-            mutRand = rand() % 100;
-            if((double) mutRand / 100 < pM) {
-                // make mutation: reverse the value of the "bit"
-                population[i][j] = !population[i][j];
-            }
-        }
-    }
+	int mutRand;
+	for(int i = 0; i < individuals; i++) {
+		for(int j = 0; j < numVariables; j++) {
+			mutRand = rand() % 100;
+			if((double) mutRand / 100 < pM) {
+				// make mutation: reverse the value of the "bit"
+				population[i][j] = !population[i][j];
+			}
+		}
+	}
 }
 
 void MaxSat::initPopulation() {
@@ -478,11 +478,11 @@ void MaxSat::initPopulation() {
 
 void MaxSat::solveGA() {
 	cout << "Solving with GA..." << endl;
-
+	
 	srand(time(NULL));
-
+	
 	initPopulation();
-
+	
 	breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
 	
 	for(int i = 0; i < individuals; i++) {
@@ -491,25 +491,25 @@ void MaxSat::solveGA() {
 	
 	for (int i = 0; i < generations; i++) {
 		evalFitness();
-        if(!selection.compare("rs")) {
-            selectRanking();
-        } else if(!selection.compare("ts")) {
-            selectTournament();
-        } else if(!selection.compare("bs")) {
-            selectBoltzman();
-        } else {
-            cout << "error in selection: no valid selection method specified" << endl;
-            exit(1);
+		if(!selection.compare("rs")) {
+			selectRanking();
+		} else if(!selection.compare("ts")) {
+			selectTournament();
+		} else if(!selection.compare("bs")) {
+			selectBoltzman();
+		} else {
+			cout << "error in selection: no valid selection method specified" << endl;
+			exit(1);
 		}
 		
-        if(!crossover.compare("1c")) {
-            onePCross();
-        } else if(!crossover.compare("uc")) {
-            uniformCross();
-        } else {
-            cout << "error in crossover: no valid crossover method specified" << endl;
-            exit(1);
-        }
+		if(!crossover.compare("1c")) {
+			onePCross();
+		} else if(!crossover.compare("uc")) {
+			uniformCross();
+		} else {
+			cout << "error in crossover: no valid crossover method specified" << endl;
+			exit(1);
+		}
 		
 		mutateOffspring();
 		
@@ -520,17 +520,18 @@ void MaxSat::solveGA() {
 			bestValue = fitnessList[bestFitness];
 			arrayCopy(best, population[bestFitness], numVariables);
 		}
-
-		if(i % (generations / 20) == 0) {
-			// print most clauses satisfied 20 times, i.e. every generations/20 times.
-			cout << "(Generation " << i << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
+		if (generations > 20) {
+			if(i % (generations / 20) == 0) {
+				// print most clauses satisfied 20 times, i.e. every generations/20 times.
+				cout << "(Generation " << i << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
+			}
 		}
 	}
 	
 	cout << endl << endl;
-	cout << "Best solution satisfied " << bestValue << " of " << clauses.size() << " clauses, found in generation " << generationFoundBest << endl;
+	cout << "Best solution satisfied " << bestValue << " of " << clauses.size() << " clauses (" << clauses.size() - bestValue << " unsatisfied), found in generation " << generationFoundBest << endl;
 	printSolution(best);
-
+	
 	free(breedingPool);
 }
 

@@ -1,5 +1,6 @@
 #include "MAXSAT.h"
 #include "math.h"
+#include "climits"
 
 using namespace std;
 
@@ -32,6 +33,7 @@ MaxSat::MaxSat(vector< vector<int> > clauses, int individuals, string selection,
 	this->pM = pM;
 	this->generations = generations;
 	this->numVariables = numVariables;
+	this->bestValue = 0;
 
 	fitnessList = (int*) malloc(sizeof(int) * individuals);
 	population = (int**) malloc(sizeof(int) * individuals * numVariables);
@@ -286,7 +288,7 @@ void MaxSat::selectRanking() {
 	
 	for (int i = 0; i < individuals; i++) {
 		double probability = 0;
-		double randomProbability = ((double) rand())/(RAND_MAX);
+		double randomProbability = ((double) rand())/(INT_MAX);
 		for (int j = 0; j < individuals; j++) {
 			probability += (j+1)/(sum);
 			
@@ -498,14 +500,8 @@ void MaxSat::solveGA() {
         } else {
             cout << "error in selection: no valid selection method specified" << endl;
             exit(1);
-        }
-
-		/*cout << "Printing breeding pool (" << individuals << " individuals, " << numVariables << " size solution)..." << endl;
-		for(int i = 0; i < individuals; i++) {
-			printSolution(breedingPool[i]);
 		}
-		*/
-
+		
         if(!crossover.compare("1c")) {
             onePCross();
         } else if(!crossover.compare("uc")) {
@@ -514,15 +510,17 @@ void MaxSat::solveGA() {
             cout << "error in crossover: no valid crossover method specified" << endl;
             exit(1);
         }
-
+		
 		mutateOffspring();
 		
+		evalFitness();
 		int bestFitness = findMaxFitness();
 		if (fitnessList[bestFitness] > bestValue) {
 			generationFoundBest = i + 1;
 			bestValue = fitnessList[bestFitness];
 			arrayCopy(best, population[bestFitness], numVariables);
 		}
+
 		if(i % (generations / 20) == 0) {
 			// print most clauses satisfied 20 times, i.e. every generations/20 times.
 			cout << "(Generation " << i << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;

@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <ctime>
+#include <climits>
 
 using namespace std;
 
@@ -18,33 +19,33 @@ public:
     ~MaxSat();
     void initPV();
 	void initPopulation();
-    
+
     // fitness
     int countSatClauses(int* solution);
     void evalFitness();
     int findMaxFitness();
     int findMinFitness();
-	
+
 	// selection
 	void selectRanking();
 	void selectTournament();
 	void arrayCopy(int* arr1, int* arr2, int size);
 	void selectBoltzman();
-	
+
 	// crossover
 	void onePCross();
 	void uniformCross();
-    
+
     // mutation
     void mutatePV();
 	void mutateOffspring();
-    
+
     // printing
     void printSolution(int* solution);
     void printPopulation();
     void printPV();
     void printClauses();
-    
+
     void solvePBIL();
     void solveGA();
 

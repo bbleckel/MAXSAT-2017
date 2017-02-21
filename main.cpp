@@ -68,7 +68,7 @@ void testCases() {
         "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf"
     };
     
-    double bestList[5] = {168.0, 238.0, 78.0, 2.0, 40.0};
+    double bestList[5] = {168.0, 238.0, 2.0, 40.0};
     int totalBestPBIL = 0;
     int totalBestGA = 0;
     

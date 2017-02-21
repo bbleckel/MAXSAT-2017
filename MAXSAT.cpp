@@ -240,7 +240,7 @@ void MaxSat::solvePBIL() {
     
     double randNum;
     // keeps track of the most clauses satisfied over the whole process
-    int maxSatisfied = 0;
+    bestValue = 0;
 	
 	int genRemaining = generations;
 	
@@ -249,7 +249,6 @@ void MaxSat::solvePBIL() {
 		for(int i = 0; i < individuals; i++) {
 			for(int j = 0; j < numVariables; j++) {
 				randNum = ((double) rand())/(INT_MAX);
-				// divide by MAX_INT?
 				if(randNum < PV[j]) {
 					population[i][j] = 1;
 				} else {
@@ -277,8 +276,8 @@ void MaxSat::solvePBIL() {
 		// mutate!
 		mutatePV();
         
-        if(fitnessList[bestFitness] > maxSatisfied) {
-            maxSatisfied = fitnessList[bestFitness];
+        if(fitnessList[bestFitness] > bestValue) {
+            bestValue = fitnessList[bestFitness];
         }
 		
 		genRemaining--;
@@ -298,8 +297,8 @@ void MaxSat::solvePBIL() {
 		}
 	}
 	
-    double percentSatisfied = (double) maxSatisfied / clauses.size();
-    cout << "Satisfied = " << setprecision(2) << percentSatisfied * 100 << "% (" << maxSatisfied << "/" << clauses.size() << " satisfied)" << endl;
+    double percentSatisfied = (double) bestValue / clauses.size();
+    cout << "Satisfied = " << setprecision(2) << percentSatisfied * 100 << "% (" << bestValue << "/" << clauses.size() << " satisfied)" << endl;
 	
 //	cout << "Best solution satisfied " << countSatClauses(population[findMaxFitness()]) << " of " << clauses.size() << " clauses" << endl;
 //	cout << "Archetypical solution satisfied " << countSatClauses(sol) << " of " << clauses.size() << " clauses:" << endl;

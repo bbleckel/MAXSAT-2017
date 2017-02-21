@@ -52,38 +52,60 @@ void testCases() {
 //    
 //    string fileName[11] = {"../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-8.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-39.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/brock200_4.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf", "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf", "../maxsat-problems/maxsat-random/max2sat/120v/s2v120c1200-10.cnf", "../maxsat-problems/maxsat-random/max2sat/140v/s2v140c1600-6.cnf", "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf", "../maxsat-problems/maxsat-random/max3sat/80v/s3v80c1000-2.cnf"};
     
-    int popSizes[3] = {10, 100, 1000};
-    int genSizes[3] = {100, 2000, 10000};
-    double posRate[3] = {0.01, 0.1, 0.75};
-    double negRate[3] = {0.01, 0.1, 0.75};
-    double pMList[3] = {0.01, 0.1, 1.0};
-    double amntList[3] = {0.05, 0.5, 1.0};
+//    int popSizes[3] = {10, 100, 1000};
+//    int genSizes[3] = {100, 2000, 10000};
+    int popSizes[3] = {10, 10, 10};
+    int genSizes[3] = {10, 100, 10};
+    double posRate[2] = {0.1, 0.75};
+    double negRate[2] = {0.1, 0.75};
+    double pMList[2] = {0.01, 0.1};
+    double amntList[2] = {0.05, 0.25};
     
-    string fileName[5] = {"../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf", "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf", "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf"};
-    
+    string fileName[5] = {
+        "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf",
+        "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf",
+        "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf",
+        "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf",
+        "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf"
+    };
+//    string fileName[4] = {
+//        "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf",
+//        "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf",
+//        "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf",
+//        "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf"
+//    };
+
+    int bestList[5] = {168, 408, 78, 2, 40};
+    int totalBest = 0;
+
     
     // PBIL tests
     int count = 0;
+    int numClauses = 0;
     // vary file name
     for(int f = 0; f < 5; f++) {
         cout << "Solving for " << fileName[f] << endl;
         // vary population size
         for(int i = 0; i < 3; i++) {
             // vary mutation probability
-            for(int p = 0; p < 3; p++) {
+            for(int p = 0; p < 2; p++) {
                 // vary mutation amount
-                for(int m = 0; m < 3; m++) {
+                for(int m = 0; m < 2; m++) {
                     // vary positive learning rate
-                    for(int l = 0; l < 3; l++) {
+                    for(int l = 0; l < 2; l++) {
                         // vary negative learning rate
-                        for(int n = 0; n < 3; n++) {
+                        for(int n = 0; n < 2; n++) {
                             // vary number of generations
                             for(int g = 0; g < 3; g++) {
-                                MaxSat solver(fileName[f], popSizes[i], posRate[l], negRate[p], pMList[p], amntList[m], genSizes[g]);
-                                solver.solvePBIL();
-                                cout << fileName[f] << popSizes[i] << posRate[l] << negRate[p] << pMList[p] << amntList[m] << genSizes[g] << endl;
-                                count++;
-
+                                MaxSat PBILSolver(fileName[f], popSizes[i], posRate[l], negRate[p], pMList[p], amntList[m], genSizes[g]);
+                                PBILSolver.solvePBIL();
+//                                MaxSat GASolver(
+                                cout << "Best value = " << PBILSolver.bestValue << endl;
+                                cout << fileName[f] << ", " << popSizes[i] << ", " << posRate[l] << ", " << negRate[p] << ", " << pMList[p] << ", " << amntList[m] << ", " << genSizes[g] << endl;
+                                if(PBILSolver.bestValue > totalBest) {
+                                    totalBest = PBILSolver.bestValue;
+                                }
+                                numClauses = PBILSolver.numClauses;
                             }
                         }
                     }
@@ -91,8 +113,12 @@ void testCases() {
                 
             }
         }
+        double percentSatisfied = (double) totalBest / numClauses;
+        double ratio = double (totalBest) / (numClauses - bestList[f]);
+        cout << "\nBest solution satisfied " << setprecision(2) << percentSatisfied * 100 << "% (" << totalBest << "/" << numClauses << " satisfied)" << endl;
+        cout << "Achieved " << setprecision(2) << ratio * 100 << "% of optimal solution" << endl;
+        sleep(3);
     }
-    cout << count << endl;
     // GA tests
 }
 

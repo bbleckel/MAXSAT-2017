@@ -43,83 +43,281 @@ void printInfo() {
 }
 
 void testCases() {
-//    int popSizes[5] = {5, 10, 100, 500, 1000};
-//    int genSizes[5] = {100, 500, 1000, 2000, 10000};
-//    double posRate[3] = {0.01, 0.1, 0.75};
-//    double negRate[3] = {0.01, 0.1, 0.75};
-//    double pMList[5] = {0.001, 0.01, 0.1, 0.5, 1.0};
-//    double amntList[5] = {0.005, 0.05, 0.25, 0.5, 1.0};
-//    
-//    string fileName[11] = {"../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-8.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-39.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/brock200_4.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf", "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf", "../maxsat-problems/maxsat-random/max2sat/120v/s2v120c1200-10.cnf", "../maxsat-problems/maxsat-random/max2sat/140v/s2v140c1600-6.cnf", "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf", "../maxsat-problems/maxsat-random/max3sat/80v/s3v80c1000-2.cnf"};
     
-//    int popSizes[3] = {10, 100, 1000};
-//    int genSizes[3] = {100, 2000, 10000};
-    int popSizes[3] = {10, 10, 10};
-    int genSizes[3] = {10, 100, 10};
-    double posRate[2] = {0.1, 0.75};
-    double negRate[2] = {0.1, 0.75};
-    double pMList[2] = {0.01, 0.1};
+    //    string fileName[11] = {"../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-8.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-39.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/brock200_4.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf", "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf", "../maxsat-problems/maxsat-random/max2sat/120v/s2v120c1200-10.cnf", "../maxsat-problems/maxsat-random/max2sat/140v/s2v140c1600-6.cnf", "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf", "../maxsat-problems/maxsat-random/max3sat/80v/s3v80c1000-2.cnf"};
+    
+    // PBIL options
+    int popSizes[3] = {10, 100, 500};
+    int genSizes[3] = {10, 500, 2000};
+    double posRate[3] = {0.01, 0.1, 0.5};
+    double negRate[3] = {0.01, 0.1, 0.5};
+    double pMList[3] = {0.01, 0.1, 0.5};
     double amntList[2] = {0.05, 0.25};
     
-    string fileName[5] = {
+    // GA options
+    string selectList[3] = {"ts", "rs", "bs"};
+    string crossoverList[2] = {"1c", "uc"};
+    double crossProbList[3] = {0.01, 0.5, 0.7};
+    // shares popSizes, genSizes, and pMList with PBIL
+    
+    
+    string fileName[4] = {
         "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf",
         "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf",
-        "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf",
         "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf",
         "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf"
     };
-//    string fileName[4] = {
-//        "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf",
-//        "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf",
-//        "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf",
-//        "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf"
-//    };
-
-    int bestList[5] = {168, 408, 78, 2, 40};
-    int totalBest = 0;
-
+    
+    double bestList[5] = {168.0, 408.0, 78.0, 2.0, 40.0};
+    int totalBestPBIL = 0;
+    int totalBestGA = 0;
+    
+    // PBIL default arguments: 100 0.1 0.075 0.2 0.05 1000
+    // GA default arguments: 100 ts 1c 0.7 0.1 1000
     
     // PBIL tests
     int count = 0;
     int numClauses = 0;
     // vary file name
-    for(int f = 0; f < 5; f++) {
-        cout << "Solving for " << fileName[f] << endl;
+    cout << "Solving for various values... percent satisfied is relative to optimal solution, *not* overall clauses." << endl;
+    sleep(4);
+    
+    for(int f = 1; f < 4; f++) {
+        cout << "Solving for " << fileName[f] << "\n" << endl;
+        
+//        // Solve with PBIL
+//        cout << "Solving with PBIL!" << endl;
+//        cout << "Varying population size..." << endl;
+//        // vary population size
+//        for(int i = 0; i < 3; i++) {
+//            MaxSat PBILSolver(fileName[f], popSizes[i], 0.1, 0.075, 0.2, 0.05, 1000);
+//            PBILSolver.solvePBIL();
+//            
+//            numClauses = PBILSolver.numClauses;
+//            double ratio = PBILSolver.bestValue / (numClauses - bestList[f]);
+//            if(ratio > 1) {
+//                cout << "Beat optimal solution!" << endl;
+//            } else {
+//                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+//            }
+//            
+//            if(PBILSolver.bestValue > totalBestPBIL) {
+//                totalBestPBIL = PBILSolver.bestValue;
+//            }
+//        }
+//        
+//        cout << "Varying mutation probability..." << endl;
+//        // vary mutation probability
+//        for(int p = 0; p < 3; p++) {
+//            MaxSat PBILSolver(fileName[f], 100, 0.1, 0.075, pMList[p], 0.05, 1000);
+//            PBILSolver.solvePBIL();
+//            
+//            double ratio = PBILSolver.bestValue / (numClauses - bestList[f]);
+//            if(ratio > 1) {
+//                cout << "Beat optimal solution!" << endl;
+//            } else {
+//                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << pMList[p] << ", " << 0.05 << ", " << 1000 << endl;
+//            }
+//            
+//            if(PBILSolver.bestValue > totalBestPBIL) {
+//                totalBestPBIL = PBILSolver.bestValue;
+//            }
+//        }
+//        
+//        cout << "Varying mutation amount..." << endl;
+//        // vary mutation amount
+//        for(int m = 0; m < 3; m++) {
+//            MaxSat PBILSolver(fileName[f], 100, 0.1, 0.075, 0.2, amntList[m], 1000);
+//            PBILSolver.solvePBIL();
+//            
+//            double ratio = PBILSolver.bestValue / (numClauses - bestList[f]);
+//            if(ratio > 1) {
+//                cout << "Beat optimal solution!" << endl;
+//            } else {
+//                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << amntList[m] << ", " << 1000 << endl;
+//            }
+//            
+//            if(PBILSolver.bestValue > totalBestPBIL) {
+//                totalBestPBIL = PBILSolver.bestValue;
+//            }
+//        }
+//        
+//        cout << "Varying positive learning rate..." << endl;
+//        // vary positive learning rate
+//        for(int l = 0; l < 3; l++) {
+//            MaxSat PBILSolver(fileName[f], 100, posRate[l], 0.075, 0.2, 0.05, 1000);
+//            PBILSolver.solvePBIL();
+//            
+//            double ratio = PBILSolver.bestValue / (numClauses - bestList[f]);
+//            if(ratio > 1) {
+//                cout << "Beat optimal solution!" << endl;
+//            } else {
+//                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << posRate[l] << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+//            }
+//            
+//            if(PBILSolver.bestValue > totalBestPBIL) {
+//                totalBestPBIL = PBILSolver.bestValue;
+//            }
+//        }
+//        
+//        cout << "Varying negative learning rate..." << endl;
+//        // vary negative learning rate
+//        for(int n = 0; n < 3; n++) {
+//            MaxSat PBILSolver(fileName[f], 100, 0.1, negRate[n], 0.2, 0.05, 1000);
+//            PBILSolver.solvePBIL();
+//            
+//            double ratio = PBILSolver.bestValue / (numClauses - bestList[f]);
+//            if(ratio > 1) {
+//                cout << "Beat optimal solution!" << endl;
+//            } else {
+//                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << negRate[n] << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+//            }
+//            
+//            if(PBILSolver.bestValue > totalBestPBIL) {
+//                totalBestPBIL = PBILSolver.bestValue;
+//            }
+//        }
+//        
+//        cout << "Varying generation number..." << endl;
+//        // vary number of generations
+//        for(int g = 0; g < 3; g++) {
+//            MaxSat PBILSolver(fileName[f], 100, 0.1, 0.075, 0.2, 0.05, genSizes[g]);
+//            PBILSolver.solvePBIL();
+//            
+//            double ratio = PBILSolver.bestValue / (numClauses - bestList[f]);
+//            if(ratio > 1) {
+//                cout << "Beat optimal solution!" << endl;
+//            } else {
+//                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << genSizes[g] << endl;
+//            }
+//            
+//            if(PBILSolver.bestValue > totalBestPBIL) {
+//                totalBestPBIL = PBILSolver.bestValue;
+//            }
+//        }
+        
+        // Solve with GA
+        cout << "Solving with GA!" << endl;
+        
+        cout << "Varying population size..." << endl;
         // vary population size
         for(int i = 0; i < 3; i++) {
-            // vary mutation probability
-            for(int p = 0; p < 2; p++) {
-                // vary mutation amount
-                for(int m = 0; m < 2; m++) {
-                    // vary positive learning rate
-                    for(int l = 0; l < 2; l++) {
-                        // vary negative learning rate
-                        for(int n = 0; n < 2; n++) {
-                            // vary number of generations
-                            for(int g = 0; g < 3; g++) {
-                                MaxSat PBILSolver(fileName[f], popSizes[i], posRate[l], negRate[p], pMList[p], amntList[m], genSizes[g]);
-                                PBILSolver.solvePBIL();
-//                                MaxSat GASolver(
-                                cout << "Best value = " << PBILSolver.bestValue << endl;
-                                cout << fileName[f] << ", " << popSizes[i] << ", " << posRate[l] << ", " << negRate[p] << ", " << pMList[p] << ", " << amntList[m] << ", " << genSizes[g] << endl;
-                                if(PBILSolver.bestValue > totalBest) {
-                                    totalBest = PBILSolver.bestValue;
-                                }
-                                numClauses = PBILSolver.numClauses;
-                            }
-                        }
-                    }
-                }
-                
+            MaxSat GASolver(fileName[f], popSizes[i], "ts", "1c", 0.7, 0.1, 1000);
+            GASolver.solveGA();
+            numClauses = GASolver.numClauses;
+            double ratio = GASolver.bestValue / (numClauses - bestList[f]);
+            if(ratio > 1) {
+                cout << "Beat optimal solution!" << "(" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+            } else {
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+            }
+            
+            if(GASolver.bestValue > totalBestGA) {
+                totalBestGA = GASolver.bestValue;
             }
         }
-        double percentSatisfied = (double) totalBest / numClauses;
-        double ratio = double (totalBest) / (numClauses - bestList[f]);
-        cout << "\nBest solution satisfied " << setprecision(2) << percentSatisfied * 100 << "% (" << totalBest << "/" << numClauses << " satisfied)" << endl;
-        cout << "Achieved " << setprecision(2) << ratio * 100 << "% of optimal solution" << endl;
+        
+        cout << "Varying mutation probability..." << endl;
+        // vary mutation probability
+        for(int p = 0; p < 3; p++) {
+            MaxSat GASolver(fileName[f], 100, "ts", "1c", 0.7, pMList[p], 1000);
+            GASolver.solveGA();
+            
+            double ratio = GASolver.bestValue / (numClauses - bestList[f]);
+            if(ratio > 1) {
+                cout << "Beat optimal solution!" << "(" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << pMList[p] << ", " << 0.05 << ", " << 1000 << endl;
+            } else {
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << pMList[p] << ", " << 0.05 << ", " << 1000 << endl;
+            }
+            
+            if(GASolver.bestValue > totalBestGA) {
+                totalBestGA = GASolver.bestValue;
+            }
+        }
+        
+        cout << "Varying selection type..." << endl;
+        // vary selection type
+        for(int m = 0; m < 3; m++) {
+            MaxSat GASolver(fileName[f], 100, selectList[m], "1c", 0.7, 0.1, 1000);
+            GASolver.solveGA();
+            
+            double ratio = GASolver.bestValue / (numClauses - bestList[f]);
+            if(ratio > 1) {
+                cout << "Beat optimal solution!" << "(" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+            } else {
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << amntList[m] << ", " << 1000 << endl;
+            }
+            
+            if(GASolver.bestValue > totalBestGA) {
+                totalBestGA = GASolver.bestValue;
+            }
+        }
+        
+        cout << "Varying crossover type..." << endl;
+        // vary crossover type
+        for(int l = 0; l < 2; l++) {
+            MaxSat GASolver(fileName[f], 100, "ts", crossoverList[l], 0.7, 0.1, 1000);
+            GASolver.solveGA();
+            
+            double ratio = GASolver.bestValue / (numClauses - bestList[f]);
+            if(ratio > 1) {
+                cout << "Beat optimal solution!" << "(" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+            } else {
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << posRate[l] << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+            }
+            
+            if(GASolver.bestValue > totalBestGA) {
+                totalBestGA = GASolver.bestValue;
+            }
+        }
+        
+        cout << "Varying crossover probability..." << endl;
+        // vary crossover probability
+        for(int n = 0; n < 3; n++) {
+            MaxSat GASolver(fileName[f], 100, "ts", "1c", crossProbList[n], 0.1, 1000);
+            GASolver.solveGA();
+            
+            double ratio = GASolver.bestValue / (numClauses - bestList[f]);
+            if(ratio > 1) {
+                cout << "Beat optimal solution!" << "(" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+            } else {
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << negRate[n] << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+            }
+            
+            if(GASolver.bestValue > totalBestGA) {
+                totalBestGA = GASolver.bestValue;
+            }
+        }
+        
+        cout << "Varying generation number..." << endl;
+        // vary number of generations
+        for(int g = 0; g < 3; g++) {
+            MaxSat GASolver(fileName[f], 100, "ts", "1c", 0.7, 0.1, genSizes[g]);
+            GASolver.solveGA();
+            
+            double ratio = GASolver.bestValue / (numClauses - bestList[f]);
+            if(ratio > 1) {
+                cout << "Beat optimal solution!" << "(" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 1000 << endl;
+            } else {
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << genSizes[g] << endl;
+            }
+            
+            if(GASolver.bestValue > totalBestGA) {
+                totalBestGA = GASolver.bestValue;
+            }
+        }
+        
+        double percentSatisfiedPBIL = (double) totalBestPBIL / numClauses;
+        double ratioPBIL = double (totalBestPBIL) / (numClauses - bestList[f]);
+        double percentSatisfiedGA = (double) totalBestGA / numClauses;
+        double ratioGA = double (totalBestGA) / (numClauses - bestList[f]);
+        
+        // give overall results of file
+        cout << "\nPBIL best solution satisfied " << setprecision(3) << ratioPBIL * 100 << "% (" << totalBestPBIL << "/" << numClauses << " satisfied)" << endl;
+
+        cout << "\nGA best solution satisfied " << setprecision(3) << ratioGA * 100 << "% (" << totalBestGA << "/" << numClauses << " satisfied)" << endl;
         sleep(3);
     }
-    // GA tests
 }
 
 
@@ -215,14 +413,14 @@ int main (int argc, char** argv) {
     }
     
     testCases();
-    
-//    if(!algType) {
-//        // call GA
-//        MaxSat solver(argv[1], individuals, selection, crossover, pC, pM, generations);
-//        solver.solveGA();
-//    } else {
-//        // call PBIL
-//        MaxSat solver(argv[1], individuals, posRate, negRate, pM, mutAmnt, generations);
-//        solver.solvePBIL();
-//    }
+//
+//        if(!algType) {
+//            // call GA
+//            MaxSat solver(argv[1], individuals, selection, crossover, pC, pM, generations);
+//            solver.solveGA();
+//        } else {
+//            // call PBIL
+//            MaxSat solver(argv[1], individuals, posRate, negRate, pM, mutAmnt, generations);
+//            solver.solvePBIL();
+//        }
 } // end main

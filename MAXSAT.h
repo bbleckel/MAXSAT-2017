@@ -24,7 +24,6 @@ public:
     
     void readFile(string fileName);
 
-    
     void initPV();
 	void initPopulation();
 
@@ -35,9 +34,9 @@ public:
     int findMinFitness();
 
 	// selection
+    void arrayCopy(int* arr1, int* arr2, int size);
 	void selectRanking();
 	void selectTournament();
-	void arrayCopy(int* arr1, int* arr2, int size);
 	void selectBoltzmann();
 
 	// crossover

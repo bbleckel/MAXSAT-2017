@@ -57,8 +57,13 @@ public:
     void solvePBIL();
     void solveGA();
     
+    // value of most satisfied clauses
     int bestValue;
+    // generation at which best value was first found
+    int genFound;
+    // number of variables in problem
     int numVariables;
+    // number of clauses in problem
     int numClauses;
 
 private:
@@ -74,7 +79,6 @@ private:
 	string selection;
 	string crossover;
     int generations;
-	int generationFoundBest;
 	int* best;
     int* fitnessList;
     int** population;

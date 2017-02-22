@@ -38,7 +38,7 @@ public:
 	void selectRanking();
 	void selectTournament();
 	void arrayCopy(int* arr1, int* arr2, int size);
-	void selectBoltzman();
+	void selectBoltzmann();
 
 	// crossover
 	void onePCross();
@@ -56,6 +56,10 @@ public:
 
     void solvePBIL();
     void solveGA();
+    
+    int bestValue;
+    int numVariables;
+    int numClauses;
 
 private:
     // class variables
@@ -70,9 +74,6 @@ private:
 	string selection;
 	string crossover;
     int generations;
-    int numVariables;
-    int numClauses;
-	int bestValue;
 	int generationFoundBest;
 	int* best;
     int* fitnessList;

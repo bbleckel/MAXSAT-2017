@@ -24,6 +24,7 @@ MaxSat::MaxSat(string fileName, int individuals, double posRate, double negRate,
 }
 
 MaxSat::MaxSat(string fileName, int individuals, string selection, string crossover, double pC, double pM, int generations) {
+	//genetic algorithms
     
     readFile(fileName);
     
@@ -354,30 +355,6 @@ void MaxSat::selectRanking() {
 		}
 	}
 	
-	
-	/*
-	 int i = 0;
-	 while (i < individuals) {
-		for (int j = 0; j < individuals; j++) {
-	 double probability = (j+1)/(sum);
-	 
-	 //get a random num between 0 and 1. if that number is less
-	 //than the selection probability, select the individual
-	 double randNum = ((double) rand())/(RAND_MAX);
-	 
-	 if (randNum < probability) {
-	 int indexOfIndividual = rankList[j][0];
-	 arrayCopy(breedingPool[i], population[indexOfIndividual], numVariables);
-	 i++;
-	 }
-	 
-	 if (i >= individuals) {
-	 break;
-	 }
-		}
-	 }
-	 */
-	
 	free(rankList);
 }
 
@@ -424,27 +401,6 @@ void MaxSat::selectBoltzman() {
 			}
 		}
 	}
-	
-	/*
-	 while (i < individuals) {
-		for (int j = 0; j < individuals; j++) {
-	 double probability = exp(fitnessList[j])/totalFitness;
-	 
-	 //get a random num between 0 and 1. if that number is less
-	 //than the selection probability, select the individual
-	 double randNum = ((double) rand())/(RAND_MAX);
-	 
-	 if (randNum < probability) {
-	 arrayCopy(breedingPool[i], population[j], numVariables);
-	 i++;
-	 }
-	 
-	 if (i >= individuals) {
-	 break;
-	 }
-		}
-	 }
-	 */
 }
 // NOTE: THIS WILL ONLY WORK FOR EVEN POPULATION I THINK
 void MaxSat::onePCross() {

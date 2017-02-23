@@ -112,14 +112,15 @@ void MaxSat::initPV() {
 }
 
 void MaxSat::initPopulation() {
-    int randNum;
-    for (int i = 0; i < individuals; i++) {
-        for (int j = 0; j < numVariables; j++) {
-            // give random values to each individual
-            randNum = rand() % 2;
-            population[i][j] = randNum;
-        }
-    }
+	//initialize population for GA with each individual
+	//holding a random value of 1 or 0
+	int randNum;
+	for (int i = 0; i < individuals; i++) {
+		for (int j = 0; j < numVariables; j++) {
+			randNum = rand() % 2;
+			population[i][j] = randNum;
+		}
+	}
 }
 
 int MaxSat::countSatClauses(int* solution) {
@@ -200,84 +201,123 @@ int compare (const void *pa, const void *pb) {
     return a[1] - b[1];
 }
 
+//array copy is used to deal with moving malloced arrays
 void MaxSat::arrayCopy(int* arr1, int* arr2, int size) {
-    for (int i = 0; i < size; i++) {
-        arr1[i] = arr2[i];
-    }
+	for (int i = 0; i < size; i++) {
+		arr1[i] = arr2[i];
+	}
 }
 
 void MaxSat::selectRanking() {
-    // a 2D array to store the index and fitness of each individual
-    // this array will be sorted by fitness
-    int** rankList = (int**) malloc(sizeof(int) * individuals  * 2);
-    for (int i = 0; i < individuals; i++) {
-        rankList[i] = (int*) malloc(sizeof(int) * 2);
+	//a 2-D array to store the index and fitness of each individual
+	//this array will be sorted by fitness
+	//this is useful to keep track of the index of the individual
+	//in the population list after we sort
+	int** rankList = (int**) malloc(sizeof(int) * individuals  * 2);
+	for (int i = 0; i < individuals; i++) {
+		rankList[i] = (int*) malloc(sizeof(int) * 2);
 
-        rankList[i][0] = i;
-        rankList[i][1] = fitnessList[i];
-    }
+		//save index
+		rankList[i][0] = i;
+		//save fitness
+		rankList[i][1] = fitnessList[i];
+	}
 
-    //quicksort to sort the individuals by fitness (while maintaining index)
-    qsort(rankList, individuals, sizeof rankList[0], compare);
+	//quicksort to sort the individuals by fitness
+	qsort(rankList, individuals, sizeof rankList[0], compare);
 
-    double sum = (individuals * (individuals + 1))/2;
+	//calcualte total sum of individuals for denominator
+	//of ranksort formula
+	double sum = (individuals * (individuals + 1))/2;
 
-    for (int i = 0; i < individuals; i++) {
-        double probability = 0;
-        double randomProbability = ((double) rand())/(INT_MAX);
-        for (int j = 0; j < individuals; j++) {
-            probability += (j + 1) / sum;
+	//outer loop to add n new individuals to the breeding pool
+	for (int i = 0; i < individuals; i++) {
+		double probability = 0;
+		//generate a random probability
+		double randomProbability = ((double) rand())/(INT_MAX);
+		//sum up probability of individuals in ranked order until the
+		//cumulative probability is greater than the random probability
+		//generated
+		for (int j = 0; j < individuals; j++) {
+			probability += (j+1)/(sum);
 
-            if (probability >= randomProbability) {
-                arrayCopy(breedingPool[i], population[rankList[j][0]], numVariables);
-            }
-        }
-    }
+			//once the sum is greater than or equal to the random probability
+			//add the individual that broke the barrier of the random prob
+			if (probability >= randomProbability) {
+				arrayCopy(breedingPool[i], population[rankList[j][0]], numVariables);
+			}
+		}
+	}
 
-    free(rankList);
+	//free pointer
+	free(rankList);
 }
 
 void MaxSat::selectTournament() {
-    int randNum;
-    int* individual1 = (int*) malloc(sizeof(int) * numVariables);
-    int* individual2 = (int*) malloc(sizeof(int) * numVariables);
-    for (int i = 0; i < individuals; i++) {
-        randNum = rand() % individuals;
-        arrayCopy(individual1, population[randNum], numVariables);
-        int fitness1 = fitnessList[randNum];
+	int randNum;
+	//malloc for two indiviuals
+	int* individual1 = (int*) malloc(sizeof(int) * numVariables);
+	int* individual2 = (int*) malloc(sizeof(int) * numVariables);
+	//select n = individuals individuals
+	for (int i = 0; i < individuals; i++) {
+		//generate a random index and set population at that
+		//index to be the first individual
+		randNum = rand() % individuals;
+		arrayCopy(individual1, population[randNum], numVariables);
+		//get fitness of individual
+		int fitness1 = fitnessList[randNum];
 
-        randNum = rand() % individuals;
-        arrayCopy(individual2, population[randNum], numVariables);
-        int fitness2 = fitnessList[randNum];
-        if (fitness1 > fitness2) {
-            arrayCopy(breedingPool[i], individual1, numVariables);
-        } else {
-            arrayCopy(breedingPool[i], individual2, numVariables);
-        }
-    }
-    free(individual1);
-    free(individual2);
+		//generate another random index and set population at it
+		//to second individual
+		randNum = rand() % individuals;
+		arrayCopy(individual2, population[randNum], numVariables);
+		//get the fitness
+		int fitness2 = fitnessList[randNum];
+
+		//compare fitnesses; put more fit one
+		//into breeding pool
+		if (fitness1 > fitness2) {
+			arrayCopy(breedingPool[i], individual1, numVariables);
+		} else {
+			arrayCopy(breedingPool[i], individual2, numVariables);
+		}
+	}
+
+	//free pointers
+	free(individual1);
+	free(individual2);
 }
 
 void MaxSat::selectBoltzmann() {
-    int i = 0;
+	//calcualte the total fitness for denominator of
+	//boltzman formula. this is the sum of
+	//e^fitness of each individual
+	double totalFitness = 0;
+	for (int n = 0; n < individuals; n++) {
+		totalFitness += exp(fitnessList[n]);
+	}
 
-    double totalFitness = 0;
-    for (int n = 0; n < individuals; n++) {
-        totalFitness += exp(fitnessList[n]);
-    }
+	//select n=individuals individuals
+	for (int i = 0; i < individuals; i++) {
+		double probability = 0;
+		//generate a random probability 0<->1
+		double randomProbability = ((double) rand())/(INT_MAX);
+		//sum up probabilities of individuals until their cumulative
+		//probability is greater than or equal to the random one
+		//generated
+		for (int j = 0; j < individuals; j++) {
+			//probability of each individual is defined by
+			//e^fitness of the individual all divided by the
+			//previously calcualted total finess
+			probability += exp(fitnessList[j])/totalFitness;
 
-    for (int i = 0; i < individuals; i++) {
-        double probability = 0;
-        double randomProbability = ((double) rand())/(INT_MAX);
-        for (int j = 0; j < individuals; j++) {
-            probability += exp(fitnessList[j])/totalFitness;
-
-            if (probability >= randomProbability) {
-                arrayCopy(breedingPool[i], population[j], numVariables);
-            }
-        }
-    }
+			//once the probability is high enough, add the individual
+			//to the breeding pool
+			if (probability >= randomProbability) {
+				arrayCopy(breedingPool[i], population[j], numVariables);
+			}
+		}
+	}
 }
 
 // function to perform one point crossover
@@ -398,16 +438,16 @@ void MaxSat::mutatePV() {
 }
 
 void MaxSat::mutateOffspring() {
-    int mutRand;
-    for(int i = 0; i < individuals; i++) {
-        for(int j = 0; j < numVariables; j++) {
-            mutRand = rand() % 100;
-            if((double) mutRand / 100 < pM) {
-                // make mutation: reverse the value of the "bit"
-                population[i][j] = !population[i][j];
-            }
-        }
-    }
+	int mutRand;
+	for(int i = 0; i < individuals; i++) {
+		for(int j = 0; j < numVariables; j++) {
+			mutRand = rand() % 100;
+			if((double) mutRand / 100 < pM) {
+				// make mutation: reverse the value of the "bit"
+				population[i][j] = !population[i][j];
+			}
+		}
+	}
 }
 
 void MaxSat::printSolution(int* solution) {
@@ -495,10 +535,6 @@ void MaxSat::solvePBIL() {
         }
 
 		genRemaining--;
-		if(genRemaining % (generations / 20) == 0) {
-			// print current solution each 20th of total generations
-			cout << "(Generation " << generations - genRemaining << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
-		}
 	}
 }
 
@@ -506,16 +542,39 @@ void MaxSat::solveGA() {
     double bestList[4] = {168.0, 238.0, 2.0, 40.0};
 
     srand(time(NULL));
+<<<<<<< HEAD
 
 	initPopulation();
 
-    best = (int*) malloc(sizeof(int) * numVariables);
+=======
 
+	//initialize population
+	initPopulation();
+
+	//best and breedinPool are class variables
+	//malloc space for best
+>>>>>>> origin/master
+    best = (int*) malloc(sizeof(int) * numVariables);
+	//malloc space for breeding pool (2-D array)
+	breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
+	for(int i = 0; i < individuals; i++) {
+		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
+	}
+
+	//iterate for total number of generations
 	for (int i = 0; i < generations; i++) {
+<<<<<<< HEAD
 
         // evaluate fitness first
 		evalFitness();
 
+=======
+		//first evaluate fitness
+		evalFitness();
+
+		//apply selection to get breeding pool based on user's
+		//choice for selection method
+>>>>>>> origin/master
         // create new individuals through selection
 		if(!selection.compare("rs")) {
 			selectRanking();
@@ -525,7 +584,8 @@ void MaxSat::solveGA() {
 			selectBoltzmann();
 		}
 
-        // perform crossover
+		//apply crossover to replace population. used method
+		//for crossover based on user input on command line
 		if(!crossover.compare("1c")) {
 			onePCross();
 		} else if(!crossover.compare("uc")) {
@@ -537,6 +597,11 @@ void MaxSat::solveGA() {
 
         // evaluate fitness again
 		evalFitness();
+
+		//save the best fitness as well as the most fit individual
+		//everytime you run a generation. this makes it so that we
+		//can print our the best individual found at the end of our
+		//algorithm, thus giving us the most fit possible individual
 		int bestFitness = findMaxFitness();
 		if (fitnessList[bestFitness] > bestValue) {
             // update working best

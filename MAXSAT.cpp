@@ -286,7 +286,7 @@ void MaxSat::onePCross() {
     int* offspring1 = (int*) malloc(sizeof(int) * numVariables);
     int* offspring2 = (int*) malloc(sizeof(int) * numVariables);
     // looking at individuals in pairs so looping through them by twos
-    for (int i = 0; i < individuals; i += 2) {
+    for (int i = 0; i < individuals - 1; i += 2) {
 
         // only performs crossover with a probability defined by the user
         double randNum = ((double) rand())/(RAND_MAX);

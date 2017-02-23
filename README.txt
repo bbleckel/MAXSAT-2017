@@ -45,6 +45,10 @@ MAXSAT files to run can be found in the included folder. Additional files can be
 	added to the folder. The program will run any file as long as the correct
 	filepath is given as the first argument when executed.
 
+The algorithms are implemented using a class. This class is contained in the MAXSAT.cpp
+and MAXSAT.h files. The MAXSAT class holds all variables for solving both algorithms 
+	as well as all functions. 
+
 The folder also includes our paper which details our experimental methodology
 	as well as our results. Note that some functions described in the paper such
 	as the 99% accuracy cutoff, are not included in the final version of the code.

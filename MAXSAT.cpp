@@ -209,10 +209,11 @@ void MaxSat::arrayCopy(int* arr1, int* arr2, int size) {
 }
 
 void MaxSat::selectRanking() {
-	//a 2-D array to store the index and fitness of each individual
-	//this array will be sorted by fitness
-	//this is useful to keep track of the index of the individual
-	//in the population list after we sort
+	/* a 2-D array to store the index and fitness of each individual
+	 * this array will be sorted by fitness
+	 * this is useful to keep track of the index of the individual
+	 * in the population list after we sort
+     */
 	int** rankList = (int**) malloc(sizeof(int) * individuals  * 2);
 	for (int i = 0; i < individuals; i++) {
 		rankList[i] = (int*) malloc(sizeof(int) * 2);
@@ -535,6 +536,10 @@ void MaxSat::solvePBIL() {
         }
 
 		genRemaining--;
+        if(genRemaining % (generations / 20) == 0) {
+            // print current solution each 20th of total generations
+            cout << "(Generation " << generations - genRemaining << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
+        }
 	}
 }
 
@@ -542,39 +547,28 @@ void MaxSat::solveGA() {
     double bestList[4] = {168.0, 238.0, 2.0, 40.0};
 
     srand(time(NULL));
-<<<<<<< HEAD
 
-	initPopulation();
+	  //initialize population
+	  initPopulation();
 
-=======
-
-	//initialize population
-	initPopulation();
-
-	//best and breedinPool are class variables
-	//malloc space for best
->>>>>>> origin/master
+	  //best and breedinPool are class variables
+	  //malloc space for best
     best = (int*) malloc(sizeof(int) * numVariables);
-	//malloc space for breeding pool (2-D array)
-	breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
-	for(int i = 0; i < individuals; i++) {
+	  breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
+    for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
 	}
 
 	//iterate for total number of generations
 	for (int i = 0; i < generations; i++) {
-<<<<<<< HEAD
 
-        // evaluate fitness first
-		evalFitness();
-
-=======
-		//first evaluate fitness
-		evalFitness();
 
 		//apply selection to get breeding pool based on user's
 		//choice for selection method
->>>>>>> origin/master
+
+		// first evaluate fitness
+		evalFitness();
+		
         // create new individuals through selection
 		if(!selection.compare("rs")) {
 			selectRanking();

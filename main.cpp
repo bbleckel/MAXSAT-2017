@@ -33,9 +33,8 @@ void printInfo() {
     cout << endl;
 }
 
+
 void testCases() {
-    
-    //    string fileName[11] = {"../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-8.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.7/maxcut-140-630-0.7-39.cnf", "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/brock200_4.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/DIMACS_MOD/MANN_a27.clq.cnf", "../maxsat-problems/maxsat-crafted/MAXCUT/SPINGLASS/t5pm3-7777.spn.cnf", "../maxsat-problems/maxsat-random/highgirth/4SAT/HG-4SAT-V100-C900-23.cnf", "../maxsat-problems/maxsat-random/max2sat/120v/s2v120c1200-10.cnf", "../maxsat-problems/maxsat-random/max2sat/140v/s2v140c1600-6.cnf", "../maxsat-problems/maxsat-random/max3sat/60v/s3v60c900-4.cnf", "../maxsat-problems/maxsat-random/max3sat/80v/s3v80c1000-2.cnf"};
     
     // PBIL options
     int popSizes[3] = {10, 100, 500};
@@ -50,7 +49,6 @@ void testCases() {
     string crossoverList[2] = {"1c", "uc"};
     double crossProbList[3] = {0.01, 0.5, 0.7};
     // shares popSizes, genSizes, and pMList with PBIL
-    
     
     string fileName[4] = {
         "../maxsat-problems/maxsat-crafted/bipartite/maxcut-140-630-0.8/maxcut-140-630-0.8-11.cnf",
@@ -78,7 +76,8 @@ void testCases() {
         totalBestGA = 0;
         // inefficient to create new class each time, but changing that would require too many changes to be worth it at this point
         MaxSat solver(fileName[f], 100, 0.1, 0.075, 0.2, 0.05, 1000);
-
+        numClauses = solver.numClauses;
+        
         cout << "Solving for " << fileName[f] << endl;
         cout << "Optimal solution is (" << solver.numClauses - bestList[f] << "/" << solver.numClauses << ") satisfied." << endl;
         
@@ -90,12 +89,11 @@ void testCases() {
             MaxSat PBILSolver(fileName[f], popSizes[i], 0.1, 0.075, 0.2, 0.05, 100);
             PBILSolver.solvePBIL();
             
-            numClauses = PBILSolver.numClauses;
             double ratio = PBILSolver.bestValue / (numClauses - bestList[f]);
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << endl;
             } else {
-                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 100 << endl;
+                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 100 << " -- in " << PBILSolver.genFound << " generations" << endl;
             }
             
             if(PBILSolver.bestValue > totalBestPBIL) {
@@ -113,7 +111,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << endl;
             } else {
-                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << pMList[p] << ", " << 0.05 << ", " << 100 << endl;
+                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << pMList[p] << ", " << 0.05 << ", " << 100 << " -- in " << PBILSolver.genFound << " generations" << endl;
             }
             
             if(PBILSolver.bestValue > totalBestPBIL) {
@@ -131,7 +129,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << endl;
             } else {
-                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << amntList[m] << ", " << 100 << endl;
+                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << amntList[m] << ", " << 100 << " -- in " << PBILSolver.genFound << " generations" << endl;
             }
             
             if(PBILSolver.bestValue > totalBestPBIL) {
@@ -149,7 +147,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << endl;
             } else {
-                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << posRate[l] << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 100 << endl;
+                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << posRate[l] << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << 100 << " -- in " << PBILSolver.genFound << " generations" << endl;
             }
             
             if(PBILSolver.bestValue > totalBestPBIL) {
@@ -167,7 +165,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << endl;
             } else {
-                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << negRate[n] << ", " << 0.2 << ", " << 0.05 << ", " << 100 << endl;
+                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << negRate[n] << ", " << 0.2 << ", " << 0.05 << ", " << 100 << " -- in " << PBILSolver.genFound << " generations" << endl;
             }
             
             if(PBILSolver.bestValue > totalBestPBIL) {
@@ -185,7 +183,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << endl;
             } else {
-                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << genSizes[g] << endl;
+                cout << "PBIL satisfied = " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << 0.1 << ", " << 0.075 << ", " << 0.2 << ", " << 0.05 << ", " << genSizes[g] << " -- in " << PBILSolver.genFound << " generations" << endl;
             }
             
             if(PBILSolver.bestValue > totalBestPBIL) {
@@ -206,7 +204,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << " (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", ts, 1c, " << 0.7 << ", " << 0.1 << ", " << 100 << endl;
             } else {
-                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", ts, 1c, " << 0.7 << ", " << 0.1 << ", " << 100 << endl;
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << popSizes[i] << ", ts, 1c, " << 0.7 << ", " << 0.1 << ", " << 100 << " -- in " << GASolver.genFound << " generations" << endl;
             }
             if(GASolver.bestValue > totalBestGA) {
                 totalBestGA = GASolver.bestValue;
@@ -223,7 +221,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << " (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << 0.7 << ", " << pMList[p] << ", " << 100 << endl;
             } else {
-                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << 0.7 << ", " << pMList[p] << ", " << 100 << endl;
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << 0.7 << ", " << pMList[p] << ", " << 100 << " -- in " << GASolver.genFound << " generations" << endl;
             }
             
             if(GASolver.bestValue > totalBestGA) {
@@ -241,7 +239,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << " (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", " << selectList[m] << " 1c, " << 0.7 << ", " << 0.1 << ", " << 100 << endl;
             } else {
-                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << 100 << ", " << selectList[m] << " 1c, " << 0.7 << ", " << 0.1 << ", " << 100 << endl;
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << 100 << ", " << selectList[m] << " 1c, " << 0.7 << ", " << 0.1 << ", " << 100 << " -- in " << GASolver.genFound << " generations" << endl;
             }
             
             if(GASolver.bestValue > totalBestGA) {
@@ -259,7 +257,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << " (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, " << crossoverList[l] << ", " << 0.7 << ", " << 0.1 << ", " << 100 << endl;
             } else {
-                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, " << crossoverList[l] << ", " << 0.7 << ", " << 0.1 << ", " << 100 << endl;
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, " << crossoverList[l] << ", " << 0.7 << ", " << 0.1 << ", " << 100 << " -- in " << GASolver.genFound << " generations" << endl;
             }
             
             if(GASolver.bestValue > totalBestGA) {
@@ -277,7 +275,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << " (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << crossProbList[n] << ", " << 0.1 << ", " << 100 << endl;
             } else {
-                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << crossProbList[n] << ", " << 0.1 << ", " << 100 << endl;
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << crossProbList[n] << ", " << 0.1 << ", " << 100 << " -- in " << GASolver.genFound << " generations" << endl;
             }
             
             if(GASolver.bestValue > totalBestGA) {
@@ -295,7 +293,7 @@ void testCases() {
             if(ratio > 1) {
                 cout << "Beat optimal solution!" << " (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << 0.7 << ", " << 0.1 << ", " << genSizes[g] << endl;
             } else {
-                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << 0.7 << ", " << 0.1 << ", " << genSizes[g] << endl;
+                cout << "GA satisfied = " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << numClauses << " satisfied)" << " with " << 100 << ", ts, 1c, " << 0.7 << ", " << 0.1 << ", " << genSizes[g] << " -- in " << GASolver.genFound << " generations" << endl;
             }
             
             if(GASolver.bestValue > totalBestGA) {
@@ -310,7 +308,7 @@ void testCases() {
         
         // give overall results of file
         cout << "\nPBIL best solution satisfied " << setprecision(3) << ratioPBIL * 100 << "% (" << totalBestPBIL << "/" << numClauses << " satisfied)" << endl;
-
+        
         cout << "GA best solution satisfied " << setprecision(3) << ratioGA * 100 << "% (" << totalBestGA << "/" << numClauses << " satisfied)" << endl;
         sleep(3);
     }
@@ -335,21 +333,22 @@ int main (int argc, char** argv) {
     int numClauses;
     
     if(argc != 9) {
+        // incorrect input
         printInfo();
         exit(1);
     } else {
         // type of algorithm determines how other arguments are interpreted
         if(!strcmp(argv[8], "g")) {
-            cout << "doing genetic" << endl;
             algType = 0;
         } else if(!strcmp(argv[8], "p")) {
             algType = 1;
         } else {
             cout << "Invalid eighth argument specifying algorithm type. Please use:" << endl;
             cout << "    algorithm    = type of algorithm (g or p) (string)" << endl;
+            exit(1);
         }
         
-        // introduces some possible errors, like entering "ts" for selection but "p" for algorithm; that error won't be caught
+        // introduces some possible errors, like entering "ts" for selection but "p" for algorithm; assuming user will give proper input base on PBIL/GA
         if(!algType) {
             // assign relevant GA variables
             if(strcmp(argv[3], "ts") && strcmp(argv[3], "ts1") && strcmp(argv[3], "ts2") && strcmp(argv[3], "rs") && strcmp(argv[3], "bs")) {
@@ -408,17 +407,24 @@ int main (int argc, char** argv) {
         cout << "    ALG_TYPE        =  PBIL" << endl;
     }
     
-    testCases();
+    // use this instead of the following if statements to iterate through files and parameters
+    // (requires files to be in proper folders in parent directory -- see format in testCases)
+//    testCases();
+    
+    if(!algType) {
+        // call GA
+        MaxSat GASolver(argv[1], individuals, selection, crossover, pC, pM, generations);
+        GASolver.solveGA();
+        
+        double ratio = GASolver.bestValue / (double) GASolver.numClauses;
+        cout << "GA satisfied " << setprecision(3) << ratio * 100 << "% (" << GASolver.bestValue << "/" << GASolver.numClauses << " satisfied)" << " with " << individuals << ", " << selection << ", " << crossover << ", " << pC << ", " << pM << ", " << generations << " -- in " << GASolver.genFound << " generations" << endl;
 
-//        if(!algType) {
-//            // call GA
-//            MaxSat solver(argv[1], individuals, selection, crossover, pC, pM, generations);
-//            solver.solveGA();
-//        } else {
-//            // call PBIL
-//            MaxSat solver(argv[1], individuals, posRate, negRate, pM, mutAmnt, generations);
-//            solver.solvePBIL();
-//
-//            cout << "PBIL (" << solver.bestValue << "/" << solver.numClauses << " satisfied)" << endl;
-//        }
+    } else {
+        // call PBIL
+        MaxSat PBILSolver(argv[1], individuals, posRate, negRate, pM, mutAmnt, generations);
+        PBILSolver.solvePBIL();
+        
+        double ratio = PBILSolver.bestValue / (double) PBILSolver.numClauses;
+        cout << "PBIL satisfied " << setprecision(3) << ratio * 100 << "% (" << PBILSolver.bestValue << "/" << PBILSolver.numClauses << " satisfied)" << " with " << individuals << ", " << posRate << ", " << negRate << ", " << pM << ", " << mutAmnt << ", " << generations << " -- in " << PBILSolver.genFound << " generations" << endl;
+    }
 } // end main

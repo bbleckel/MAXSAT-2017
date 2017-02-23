@@ -24,7 +24,6 @@ public:
     
     void readFile(string fileName);
 
-    
     void initPV();
 	void initPopulation();
 
@@ -35,9 +34,9 @@ public:
     int findMinFitness();
 
 	// selection
+    void arrayCopy(int* arr1, int* arr2, int size);
 	void selectRanking();
 	void selectTournament();
-	void arrayCopy(int* arr1, int* arr2, int size);
 	void selectBoltzmann();
 
 	// crossover
@@ -57,8 +56,13 @@ public:
     void solvePBIL();
     void solveGA();
     
+    // value of most satisfied clauses
     int bestValue;
+    // generation at which best value was first found
+    int genFound;
+    // number of variables in problem
     int numVariables;
+    // number of clauses in problem
     int numClauses;
 
 private:
@@ -74,7 +78,6 @@ private:
 	string selection;
 	string crossover;
     int generations;
-	int generationFoundBest;
 	int* best;
     int* fitnessList;
     int** population;

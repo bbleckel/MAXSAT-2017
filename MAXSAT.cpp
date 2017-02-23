@@ -4,16 +4,16 @@ using namespace std;
 
 MaxSat::MaxSat(string fileName, int individuals, double posRate, double negRate, double pM, double mutAmnt, int generations) {
     // PBIL constructor
-    
+
     readFile(fileName);
-    
+
     this->individuals = individuals;
 	this->posRate = posRate;
 	this->negRate = negRate;
 	this->pM = pM;
 	this->mutAmnt = mutAmnt;
 	this->generations = generations;
-	
+
 	// allocate array memory
 	fitnessList = (int*) malloc(sizeof(int) * individuals);
 	population = (int**) malloc(sizeof(int) * individuals * numVariables);
@@ -24,9 +24,9 @@ MaxSat::MaxSat(string fileName, int individuals, double posRate, double negRate,
 
 MaxSat::MaxSat(string fileName, int individuals, string selection, string crossover, double pC, double pM, int generations) {
     // GA constructor
-    
+
     readFile(fileName);
-    
+
 	this->individuals = individuals;
 	this->selection = selection;
 	this->crossover = crossover;
@@ -34,13 +34,13 @@ MaxSat::MaxSat(string fileName, int individuals, string selection, string crosso
 	this->pM = pM;
 	this->generations = generations;
 	this->bestValue = 0;
-	
+
     breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
-    
+
     for(int i = 0; i < individuals; i++) {
         breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
     }
-    
+
 	fitnessList = (int*) malloc(sizeof(int) * individuals);
 	population = (int**) malloc(sizeof(int) * individuals * numVariables);
 	for(int i = 0; i < individuals; i++) {
@@ -80,13 +80,13 @@ void MaxSat::readFile(string fileName) {
                 line.erase(0, line.find(delimiter) + delimiter.length());
                 entry = line.substr(0, line.find(delimiter));
                 line.erase(0, line.find(delimiter) + delimiter.length());
-                
+
                 // save number of variables & clauses
                 numVariables = stoi(line.substr(0, line.find(delimiter)));
                 line.erase(0, line.find(delimiter) + delimiter.length());
                 numClauses = stoi(line.substr(0, line.find(delimiter)));
                 line.erase(0, line.find(delimiter) + delimiter.length());
-                
+
             } else if (line.back() == '0'){
                 // line should be included in data we are using
                 string entry;
@@ -123,10 +123,10 @@ void MaxSat::initPopulation() {
 }
 
 int MaxSat::countSatClauses(int* solution) {
-    
+
 	int count = 0;
 	// each solution requires O(numClauses * numVariables) to count satisfied clauses
-	
+
 	//iterate through clauses
 	for(int i = 0; i < clauses.size(); i++) {
 		// iterate through variables of each clause
@@ -137,7 +137,7 @@ int MaxSat::countSatClauses(int* solution) {
 			if(clauses[i][j] < 0) {
                 // take positive value
 				value = -1 * clauses[i][j];
-				
+
 				// note: should never be a variable 0, as 0's are reserved for end of line
                 // since the variable is negative, we'd like there to be a 0 in solution
 				if(!solution[value - 1]) {
@@ -146,7 +146,7 @@ int MaxSat::countSatClauses(int* solution) {
 				}
 			} else {
 				value = clauses[i][j];
-				
+
                 // since variable is positive, we want a 1 in solution
 				if(solution[value - 1]) {
 					count++;
@@ -155,7 +155,7 @@ int MaxSat::countSatClauses(int* solution) {
 			}
 		}
 	}
-	
+
 	return count;
 }
 
@@ -196,7 +196,7 @@ int MaxSat::findMinFitness() {
 int compare (const void *pa, const void *pb) {
     const int *a = *(const int **)pa;
     const int *b = *(const int **)pb;
-    
+
     return a[1] - b[1];
 }
 
@@ -212,28 +212,28 @@ void MaxSat::selectRanking() {
     int** rankList = (int**) malloc(sizeof(int) * individuals  * 2);
     for (int i = 0; i < individuals; i++) {
         rankList[i] = (int*) malloc(sizeof(int) * 2);
-        
+
         rankList[i][0] = i;
         rankList[i][1] = fitnessList[i];
     }
-    
+
     //quicksort to sort the individuals by fitness (while maintaining index)
     qsort(rankList, individuals, sizeof rankList[0], compare);
-    
+
     double sum = (individuals * (individuals + 1))/2;
-    
+
     for (int i = 0; i < individuals; i++) {
         double probability = 0;
         double randomProbability = ((double) rand())/(INT_MAX);
         for (int j = 0; j < individuals; j++) {
             probability += (j + 1) / sum;
-            
+
             if (probability >= randomProbability) {
                 arrayCopy(breedingPool[i], population[rankList[j][0]], numVariables);
             }
         }
     }
-    
+
     free(rankList);
 }
 
@@ -245,7 +245,7 @@ void MaxSat::selectTournament() {
         randNum = rand() % individuals;
         arrayCopy(individual1, population[randNum], numVariables);
         int fitness1 = fitnessList[randNum];
-        
+
         randNum = rand() % individuals;
         arrayCopy(individual2, population[randNum], numVariables);
         int fitness2 = fitnessList[randNum];
@@ -261,18 +261,18 @@ void MaxSat::selectTournament() {
 
 void MaxSat::selectBoltzmann() {
     int i = 0;
-    
+
     double totalFitness = 0;
     for (int n = 0; n < individuals; n++) {
         totalFitness += exp(fitnessList[n]);
     }
-    
+
     for (int i = 0; i < individuals; i++) {
         double probability = 0;
         double randomProbability = ((double) rand())/(INT_MAX);
         for (int j = 0; j < individuals; j++) {
             probability += exp(fitnessList[j])/totalFitness;
-            
+
             if (probability >= randomProbability) {
                 arrayCopy(breedingPool[i], population[j], numVariables);
             }
@@ -280,52 +280,84 @@ void MaxSat::selectBoltzmann() {
     }
 }
 
+// function to perform one point crossover
 void MaxSat::onePCross() {
+    // allocate the offspring outside the loop so it only has to be done once
+    int* offspring1 = (int*) malloc(sizeof(int) * numVariables);
+    int* offspring2 = (int*) malloc(sizeof(int) * numVariables);
+    // looking at individuals in pairs so looping through them by twos
     for (int i = 0; i < individuals; i += 2) {
+
+        // only performs crossover with a probability defined by the user
         double randNum = ((double) rand())/(RAND_MAX);
         if (randNum < pC){
+            // first parent is current location in breeding pool
             int* parent1 = breedingPool[i];
-            int* parent2 = breedingPool[i+1];
+            // second parent is next in breeding pool or loops back to the start
+            // if parent1 is the last one in the breeding pool
+            int* parent2;
+            if (i+1 >= individuals) {
+                parent2 = breedingPool[0];
+            } else {
+                parent2 = breedingPool[i+1];
+            }
+
+            // set the cross point to be a random location
             double crossPointRand = ((double) rand())/(RAND_MAX);
             int crossPoint = (int) (crossPointRand * numVariables);
-            int* offspring1 = (int*) malloc(sizeof(int) * numVariables);
-            int* offspring2 = (int*) malloc(sizeof(int) * numVariables);
-            
+
+            // loop through to create the children
             for (int j = 0; j < numVariables; j++) {
+                // before the crosspoint
                 if (j < crossPoint) {
                     offspring1[j] = parent1[j];
                     offspring2[j] = parent2[j];
+
+                // after the crosspoint
                 } else {
                     offspring1[j] = parent2[j];
                     offspring2[j] = parent1[j];
                 }
             }
+
+            // copy the new offspring into the population
             arrayCopy(population[i], offspring1, numVariables);
             arrayCopy(population[i+1], offspring2, numVariables);
-            free(offspring1);
-            free(offspring2);
+
+        // crossover did not happen, move the parents right into the population
         } else {
             arrayCopy(population[i], breedingPool[i], numVariables);
             arrayCopy(population[i+1], breedingPool[i+1], numVariables);
         }
     }
+    // free the offspring
+    free(offspring1);
+    free(offspring2);
 }
 
+// function to perform uniform crossover
 void MaxSat::uniformCross() {
+    // allocate the offspring outside the loop so it only has to be done once
+    int* offspring = (int*) malloc(sizeof(int) * numVariables);
+    // looking at individuals one at a time in the breeding pool
     for (int i = 0; i < individuals; i++) {
+        // does crossover with a probability defined by the user
         double randNum = ((double) rand())/(RAND_MAX);
         if (randNum < pC) {
+            // parent1 is the current location in breeding pool
             int* parent1 = breedingPool[i];
             int* parent2;
-            if (i+1 == individuals) {
+            // parent2 is the next individual unless parent1 is the last
+            // individual, then parent2 is the first individual
+            if (i+1 >= individuals) {
                 parent2 = breedingPool[0];
             } else {
                 parent2 = breedingPool[i+1];
             }
-            // should only malloc & free once if necessary
-            int* offspring = (int*) malloc(sizeof(int) * numVariables);
-            
+
+            // loops through each index in the offspring
             for (int j = 0; j < numVariables; j++) {
+                // chooses from the parents with equal probability
                 double pointProb = ((double) rand())/(RAND_MAX);
                 if (pointProb < 0.5) {
                     offspring[j] = parent1[j];
@@ -333,12 +365,15 @@ void MaxSat::uniformCross() {
                     offspring[j] = parent2[j];
                 }
             }
+            // copy the offspring into the population
             arrayCopy(population[i], offspring, numVariables);
-            free(offspring);
+        // crossover did not happen, move parent1 right into the population
         } else {
             arrayCopy(population[i], breedingPool[i], numVariables);
         }
     }
+    // free the offspring
+    free(offspring);
 }
 
 void MaxSat::mutatePV() {
@@ -412,16 +447,16 @@ void MaxSat::printClauses() {
 
 void MaxSat::solvePBIL() {
 	srand(time(NULL));
-	
+
 	// initialize PV
 	initPV();
-    
+
     double randNum;
     // keeps track of the most clauses satisfied over the whole process
     bestValue = 0;
-	
+
 	int genRemaining = generations;
-	
+
 	while(genRemaining >= 0) {
 		// create population
 		for(int i = 0; i < individuals; i++) {
@@ -438,7 +473,7 @@ void MaxSat::solvePBIL() {
 		evalFitness();
 		int bestFitness = findMaxFitness();
 		int worstFitness = findMinFitness();
-		
+
 		// update PV towards best solution
 		for(int i = 0; i < PV.size(); i++) {
 			PV[i] = PV[i] * (1.0 - posRate) + population[bestFitness][i] * posRate;
@@ -450,15 +485,15 @@ void MaxSat::solvePBIL() {
 				PV[i] = PV[i] * (1.0 - negRate) + population[bestFitness][i] * negRate;
 			}
 		}
-		
+
 		// mutate!
 		mutatePV();
-        
+
         if(fitnessList[bestFitness] > bestValue) {
             bestValue = fitnessList[bestFitness];
             genFound = generations - genRemaining;
         }
-        
+
 		genRemaining--;
 		if(genRemaining % (generations / 20) == 0) {
 			// print current solution each 20th of total generations
@@ -471,16 +506,16 @@ void MaxSat::solveGA() {
     double bestList[4] = {168.0, 238.0, 2.0, 40.0};
 
     srand(time(NULL));
-	
+
 	initPopulation();
-    
+
     best = (int*) malloc(sizeof(int) * numVariables);
 
 	for (int i = 0; i < generations; i++) {
-        
+
         // evaluate fitness first
 		evalFitness();
-        
+
         // create new individuals through selection
 		if(!selection.compare("rs")) {
 			selectRanking();
@@ -496,10 +531,10 @@ void MaxSat::solveGA() {
 		} else if(!crossover.compare("uc")) {
 			uniformCross();
 		}
-        
+
         // perform mutation on population
 		mutateOffspring();
-        
+
         // evaluate fitness again
 		evalFitness();
 		int bestFitness = findMaxFitness();

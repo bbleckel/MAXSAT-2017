@@ -1,9 +1,11 @@
 GA & PBIL MAXSAT
-By: Jasper Houston, Dylan Parsons and Bo Bleckel
+By: Bo Bleckel, Jasper Houston, and Dylan Parsons
 Nature Inspired Computation - CSCI 3445
 Bowdoin College
 
-This program solves satisfiability problems using evolutionary algorithms. The main.cpp file deals with executing the file and parsing the command line arguments. The command line arguments are as follows, in the order presented:
+This program solves satisfiability problems using evolutionary algorithms.
+	The main.cpp file deals with executing the file and parsing the command line arguments.
+	The command line arguments are as follows, in the order presented:
 
 For running Genetic Algorithm:
 	file_name    = path of file from which to read (string)
@@ -36,8 +38,15 @@ For running PBIL:
 
 	example: ./main t3pm3-5555.spn.cnf 100 0.1 0.075 0.02 0.05 1000 p
 
-These arguments are entered after the executable for the file, which is ./main and can be compiled using the included Makefile (simply type make to compile).
+These arguments are entered after the executable for the file, which is ./main
+	and can be compiled using the included Makefile (simply type make to compile).
 
-MAXSAT files to run can be found in the included folder. Additional files can be added to the folder. The program will run any file as long as the correct filepath is given as the first argument when executed.
+MAXSAT files to run can be found in the included folder. Additional files can be
+	added to the folder. The program will run any file as long as the correct
+	filepath is given as the first argument when executed.
 
-The folder also includes our paper which details our experimental methodology as well as our results. Note that some functions described in the paper such as the 99% accuracy cutoff, are not included in the final version of the code. In addition, there are functions included in the code that were used for batch testing parameters that are not called in the final build.
+The folder also includes our paper which details our experimental methodology
+	as well as our results. Note that some functions described in the paper such
+	as the 99% accuracy cutoff, are not included in the final version of the code.
+	In addition, there are functions included in the code that were used for batch
+	testing parameters that are not called in the final build.

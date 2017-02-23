@@ -209,10 +209,11 @@ void MaxSat::arrayCopy(int* arr1, int* arr2, int size) {
 }
 
 void MaxSat::selectRanking() {
-	//a 2-D array to store the index and fitness of each individual
-	//this array will be sorted by fitness
-	//this is useful to keep track of the index of the individual
-	//in the population list after we sort
+	/* a 2-D array to store the index and fitness of each individual
+	 * this array will be sorted by fitness
+	 * this is useful to keep track of the index of the individual
+	 * in the population list after we sort
+     */
 	int** rankList = (int**) malloc(sizeof(int) * individuals  * 2);
 	for (int i = 0; i < individuals; i++) {
 		rankList[i] = (int*) malloc(sizeof(int) * 2);
@@ -500,6 +501,10 @@ void MaxSat::solvePBIL() {
         }
         
 		genRemaining--;
+        if(genRemaining % (generations / 20) == 0) {
+            // print current solution each 20th of total generations
+            cout << "(Generation " << generations - genRemaining << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
+        }
 	}
 }
 
@@ -508,13 +513,11 @@ void MaxSat::solveGA() {
 
     srand(time(NULL));
 	
-	//initialize population
+	// initialize population
 	initPopulation();
 	
-	//best and breedinPool are class variables
-	//malloc space for best
+	// best and breedingPool are class variables
     best = (int*) malloc(sizeof(int) * numVariables);
-	//malloc space for breeding pool (2-D array)
 	breedingPool = (int**) malloc(sizeof(int) * individuals * numVariables);
 	for(int i = 0; i < individuals; i++) {
 		breedingPool[i] = (int*) malloc(sizeof(int) * numVariables);
@@ -522,11 +525,9 @@ void MaxSat::solveGA() {
 	
 	//iterate for total number of generations
 	for (int i = 0; i < generations; i++) {
-		//first evaluate fitness
+		// first evaluate fitness
 		evalFitness();
 		
-		//apply selection to get breeding pool based on user's
-		//choice for selection method
         // create new individuals through selection
 		if(!selection.compare("rs")) {
 			selectRanking();
@@ -536,8 +537,7 @@ void MaxSat::solveGA() {
 			selectBoltzmann();
 		}
 		
-		//apply crossover to replace population. used method
-		//for crossover based on user input on command line
+		// apply crossover to replace population
 		if(!crossover.compare("1c")) {
 			onePCross();
 		} else if(!crossover.compare("uc")) {
@@ -550,10 +550,8 @@ void MaxSat::solveGA() {
         // evaluate fitness again
 		evalFitness();
 		
-		//save the best fitness as well as the most fit individual
-		//everytime you run a generation. this makes it so that we
-		//can print our the best individual found at the end of our
-		//algorithm, thus giving us the most fit possible individual
+		// save the best fitness and the most fit individual
+		// everytime a generation is run
 		int bestFitness = findMaxFitness();
 		if (fitnessList[bestFitness] > bestValue) {
             // update working best

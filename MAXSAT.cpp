@@ -460,15 +460,7 @@ void MaxSat::solvePBIL() {
         }
         
 		genRemaining--;
-<<<<<<< HEAD
-//		if(genRemaining % (generations / 20) == 0) {
-//			// print most clauses satisfied each 10 generations
-//			cout << "(Generation " << generations - genRemaining << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
-//		}
 	}
-	
-//    double percentSatisfied = (double) bestValue / clauses.size();
-//    cout << "Satisfied = " << setprecision(2) << percentSatisfied * 100 << "% (" << bestValue << "/" << clauses.size() << " satisfied)" << endl;
 }
 
 int compare ( const void *pa, const void *pb ) {
@@ -596,7 +588,7 @@ void MaxSat::selectBoltzmann() {
 		}
 	}
 }
-// NOTE: THIS WILL ONLY WORK FOR EVEN POPULATION I THINK
+
 void MaxSat::onePCross() {
 	for (int i = 0; i < individuals; i += 2) {
 		double randNum = ((double) rand())/(RAND_MAX);
@@ -679,11 +671,6 @@ void MaxSat::initPopulation() {
 		for (int j = 0; j < numVariables; j++) {
 			randNum = rand() % 2;
 			population[i][j] = randNum;
-=======
-		if(genRemaining % (generations / 20) == 0) {
-			// print current solution each 20th of total generations
-			cout << "(Generation " << generations - genRemaining << ") -- Best solution satisfied " << fitnessList[bestFitness] << " of " << clauses.size() << " clauses" << endl;
->>>>>>> 998613dd5c50f92c40dea7f887b00f6b81267459
 		}
 	}
 }
@@ -695,7 +682,6 @@ void MaxSat::solveGA() {
 	
 	//initialize population
 	initPopulation();
-<<<<<<< HEAD
 	
 	//best and breedinPool are class variables
 	//malloc space for best
@@ -713,15 +699,6 @@ void MaxSat::solveGA() {
 		
 		//apply selection to get breeding pool based on user's
 		//choice for selection method
-=======
-    
-    best = (int*) malloc(sizeof(int) * numVariables);
-
-	for (int i = 0; i < generations; i++) {
-        
-        // evaluate fitness first
-		evalFitness();
-        
         // create new individuals through selection
 		if(!selection.compare("rs")) {
 			selectRanking();
@@ -730,25 +707,14 @@ void MaxSat::solveGA() {
 		} else if(!selection.compare("bs")) {
 			selectBoltzmann();
 		}
-
-<<<<<<< HEAD
+		
 		//apply crossover to replace population. used method
 		//for crossover based on user input on command line
-=======
-        // perform crossover
->>>>>>> 998613dd5c50f92c40dea7f887b00f6b81267459
 		if(!crossover.compare("1c")) {
 			onePCross();
 		} else if(!crossover.compare("uc")) {
 			uniformCross();
 		}
-<<<<<<< HEAD
-		
-		//apply mutation
-		mutateOffspring();
-		
-		//re-evaluate
-=======
         
         // perform mutation on population
 		mutateOffspring();
@@ -774,7 +740,3 @@ void MaxSat::solveGA() {
 	}
 	free(breedingPool);
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 998613dd5c50f92c40dea7f887b00f6b81267459

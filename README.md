@@ -1,4 +1,4 @@
-GA & PBIL MAXSAT
+# GA & PBIL MAXSAT
 By: Bo Bleckel, Jasper Houston, and Dylan Parsons
 Nature Inspired Computation - CSCI 3445
 Bowdoin College
@@ -7,6 +7,7 @@ This program solves satisfiability problems using evolutionary algorithms.
 	The main.cpp file deals with executing the file and parsing the command line arguments.
 	The command line arguments are as follows, in the order presented:
 
+### Instructions for GA
 For running Genetic Algorithm:
 	file_name    = path of file from which to read (string)
 	individuals  = number of individuals in population (int)
@@ -26,6 +27,7 @@ For running Genetic Algorithm:
 
 	example: ./main t3pm3-5555.spn.cnf 100 ts 1c 0.7 0.01 1000 g
 
+### Instructions for PBIL
 For running PBIL:
 	file_name          = path of file from which to read (string)
 	individuals        = number of individuals in population (int)

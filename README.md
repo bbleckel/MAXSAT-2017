@@ -3,6 +3,8 @@ By: Bo Bleckel, Jasper Houston, and Dylan Parsons
 Nature Inspired Computation - CSCI 3445
 Bowdoin College
 
+Writeup [here](project1-ga-pbil-for-maxsat.pdf)
+
 This program solves satisfiability problems using evolutionary algorithms.
 	The main.cpp file deals with executing the file and parsing the command line arguments.
 	The command line arguments are as follows, in the order presented:
